@@ -1,129 +1,160 @@
-# FitMe: Fitness Class Booking Platform
+# Fitness Class Booking System
 
-FitMe is a Django-powered fitness class booking system designed for streamlined user interaction, secure data handling, and modern DevOps practices. It integrates Docker containerization, CI/CD pipelines, and automated deployment for a full-stack development and delivery experience.
+A Django-based fitness class booking system with Docker containerization, CI/CD pipeline, and automated deployment.
 
 ## Features
 
-- Secure user registration, login, and authentication  
-- PostgreSQL-based persistent data storage  
-- Automated email alerts for class bookings and reminders  
-- Dockerized development environment  
-- End-to-end CI/CD with GitHub Actions  
-- Seamless deployment with Ansible  
+- User authentication (registration/login)
+- Database persistence with PostgreSQL
+- Email notifications for bookings and reminders
+- Docker containerization
+- CI/CD pipeline with GitHub Actions
+- Automated deployment with Ansible
 
-## Requirements
+## Project Structure
 
-- Docker & Docker Compose  
-- Python 3.11 or higher  
-- PostgreSQL (v13+)  
-- Nginx  
-- Ansible  
-- Docker Hub account (for deployment pipeline)  
+```
+fitness_booking/
+├── docker/
+│   ├── django/
+│   │   └── Dockerfile
+│   ├── nginx/
+│   │   ├── Dockerfile
+│   │   └── nginx.conf
+│   └── postgres/
+│       └── Dockerfile
+├── ansible/
+│   ├── deploy.yml
+│   ├── env.j2
+│   └── docker-compose.yml.j2
+├── .github/
+│   └── workflows/
+│       └── main.yml
+├── fitness_booking/
+│   ├── __init__.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+├── manage.py
+├── requirements.txt
+├── docker-compose.yml
+└── .env
+```
 
-## Running Locally
+## Prerequisites
+
+- Docker and Docker Compose
+- Python 3.11+
+- PostgreSQL 13+
+- Nginx
+- Ansible (for deployment)
+- Docker Hub account (for CI/CD)
+
+## Local Development
 
 1. Clone the repository:
-   git clone https://github.com/paulinemutuku/DevOps_Challenge.git
-   cd fitme
+   ```bash
+   git clone https://github.com/GanzAfrica/fitness_booking.git
+   cd fitness_booking
+   ```
 
-2. Set up your environment variables:
+2. Create and configure `.env` file:
+   ```bash
    cp .env.example .env
-   # Then fill in your .env values
+   # Edit .env with your configuration
+   ```
 
-3. Build and start the services:
+3. Build and run with Docker Compose:
+   ```bash
    docker-compose build
    docker-compose up
+   ```
 
-4. Application Access:
-   - Web App: http://localhost:80  
-   - Admin Portal: http://localhost:80/admin  
-   - REST API: http://localhost:80/api/  
+4. Access the application:
+   - Main application: http://localhost:80
+   - Django admin: http://localhost:80/admin
+   - API endpoints: http://localhost:80/api/
 
-## CI/CD Workflow
+## CI/CD Pipeline
 
-FitMe uses GitHub Actions to automate the CI/CD lifecycle:
+The project uses GitHub Actions for continuous integration and deployment:
 
-### Steps:
+1. Code Quality Check:
+   - Flake8 for linting
+   - Black for code formatting
+   - isort for import sorting
 
-1. Code Quality Assurance  
-   - Linting via Flake8  
-   - Formatting with Black  
-   - Import sorting using isort  
+2. Testing:
+   - Django test suite
+   - Integration tests
 
-2. Testing  
-   - Executes unit and integration tests  
+3. Docker Build and Push:
+   - Build Docker images
+   - Push to Docker Hub
 
-3. Docker Image Handling  
-   - Builds and pushes Docker images to Docker Hub  
+### GitHub Actions Setup
 
-4. Deployment Trigger  
-   - Automatically deploys when changes are pushed to the main branch  
+1. Add Docker Hub credentials to GitHub Secrets:
+   - `DOCKERHUB_USERNAME`: Your Docker Hub username
+   - `DOCKERHUB_TOKEN`: Your Docker Hub access token
 
-### Setup for GitHub Actions
+2. The workflow will automatically:
+   - Run code quality checks
+   - Run tests
+   - Build and push Docker images to Docker Hub
+   - Trigger deployment (on main branch)
 
-Add the following to your GitHub repository secrets:
+## Deployment
 
-- DOCKERHUB_USERNAME  
-- DOCKERHUB_TOKEN  
+The application can be deployed using Ansible:
 
-The workflow will then:
-- Validate code quality  
-- Run tests  
-- Build/push Docker images  
-- Initiate deployment  
-
-## Deployment Instructions
-
-Deploy using Ansible with the following steps:
-
-1. Prepare the inventory file:
+1. Configure your inventory file:
+   ```bash
    cp ansible/inventory.ini.example ansible/inventory.ini
-   # Update server details
+   # Edit inventory.ini with your server details
+   ```
 
-2. Export deployment environment variables:
-   export DB_PASSWORD=your_password
-   export DJANGO_SECRET_KEY=your_key
+2. Set up environment variables:
+   ```bash
+   export DB_PASSWORD=your_database_password
+   export DJANGO_SECRET_KEY=your_secret_key
+   ```
 
-3. Run the Ansible playbook:
+3. Run the deployment:
+   ```bash
    ansible-playbook -i ansible/inventory.ini ansible/deploy.yml
+   ```
 
-## Deployment Configuration
+### Server Configuration
 
-- Server IP: 64.23.210.235  
-- Nginx (Public): Port 8080  
-- Django: Port 8000  
-- PostgreSQL: Port 5432  
+The application is configured to run on:
+- Server IP: 64.23.210.235
+- Nginx Port: 8080 (assigned port)
+- Django Port: 8000 (internal)
+- PostgreSQL Port: 5432 (internal)
 
-Access Points:
-- Live App: http://64.23.210.235:8080  
-- Admin Panel: http://64.23.210.235:8080/admin  
-- API: http://64.23.210.235:8080/api/  
+Access the deployed application at:
+- Main application: http://64.23.210.235:8080
+- Django admin: http://64.23.210.235:8080/admin
+- API endpoints: http://64.23.210.235:8080/api/
 
-## Required Environment Variables
+## Environment Variables
 
-To configure .env or deployment:
-
-- DJANGO_SECRET_KEY  
-- DJANGO_DEBUG  
-- DATABASE_URL  
-- EMAIL_HOST  
-- EMAIL_PORT  
-- EMAIL_HOST_USER  
-- EMAIL_HOST_PASSWORD  
-- EMAIL_USE_TLS  
-- DB_PASSWORD  
+Required environment variables:
+- `DJANGO_SECRET_KEY`
+- `DJANGO_DEBUG`
+- `DATABASE_URL`
+- `EMAIL_HOST`
+- `EMAIL_PORT`
+- `EMAIL_HOST_USER`
+- `EMAIL_HOST_PASSWORD`
+- `EMAIL_USE_TLS`
+- `DB_PASSWORD` (for Ansible deployment)
 
 ## Contributing
 
-To contribute:
-
-1. Fork this repo  
-2. Create a branch with your changes  
-3. Push your updates  
-4. Open a Pull Request for review  
-
-## License
-
-FitMe is open-source and available under the MIT License.
-
-Developer: Pauline Mutuku
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
