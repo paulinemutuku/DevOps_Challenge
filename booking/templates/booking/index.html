@@ -1,0 +1,336 @@
+{% extends "booking/base.html" %}
+{% load static %}
+
+{% block title %}FitBook - Home{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        line-height: 1.6;
+        color: #333;
+        background-color: #fce4ec; 
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .hero-section {
+        position: relative;
+        height: 80vh; 
+        display: flex;
+        align-items: center;
+        justify-content: flex-start; 
+        background-image: linear-gradient(rgba(211, 47, 47, 0.7), rgba(0, 0, 0, 0.3)), url("/static/Images/campusrec.jpg");
+        background-size: cover;
+        background-position: center;
+        color: white;
+        padding: 100px 50px; 
+    }
+
+    .hero-content {
+        max-width: 600px; 
+    }
+
+    .hero-content h1 {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+        line-height: 1.1;
+    }
+
+    .hero-content p {
+        font-size: 1.4rem;
+        margin-bottom: 40px;
+        line-height: 1.8;
+    }
+
+    .button {
+        display: inline-block;
+        padding: 15px 35px;
+        background-color: #d32f2f;
+        color: white;
+        border: none;
+        border-radius: 30px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .button:hover {
+        background-color: #b71c1c;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .class-section {
+        padding: 80px 0;
+    }
+
+    .class-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); 
+        gap: 40px;
+    }
+
+    .class-card {
+        background-color: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        transition: all 0.4s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .class-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .class-header {
+        background: linear-gradient(to right, #e57373, #d32f2f);
+        color: white;
+        padding: 30px;
+        font-size: 1.5rem;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    .class-body {
+        padding: 30px;
+        flex-grow: 1;
+    }
+
+    .class-meta {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .class-meta i {
+        color: #d32f2f;
+        margin-right: 12px;
+        font-size: 1.2rem;
+    }
+
+    .class-description {
+        margin-bottom: 25px;
+        line-height: 1.8;
+    }
+
+    .class-footer {
+        padding: 25px 30px 30px;
+        text-align: center;
+    }
+
+    .feature-section {
+        padding: 100px 0;
+    }
+
+    .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 40px;
+    }
+
+    .feature-box {
+        background-color: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        transition: all 0.4s ease;
+    }
+
+    .feature-box:hover {
+        transform: translateY(-15px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .feature-icon {
+        background-color: #d32f2f;
+        color: white;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin: 0 auto 30px;
+    }
+
+    .feature-title {
+        font-size: 1.8rem;
+        color: #c62828;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .feature-description {
+        margin-bottom: 30px;
+        line-height: 1.8;
+        text-align: center;
+    }
+
+    .feature-list {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .feature-list li {
+        padding: 12px 0;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid #eee;
+    }
+
+    .feature-list li:last-child {
+        border-bottom: none;
+    }
+
+    .feature-list li:before {
+        content: "✓";
+        color: #e57373;
+        font-weight: bold;
+        margin-right: 12px;
+        font-size: 1.2rem;
+    }
+
+    .section-title {
+        font-size: 3rem;
+        color: #c62828;
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .section-subtitle {
+        font-size: 1.2rem;
+        color: #666;
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    @media (max-width: 768px) {
+        .hero-section {
+            height: auto;
+            padding: 80px 20px;
+            justify-content: center;
+        }
+
+        .hero-content {
+            max-width: 100%;
+            text-align: center;
+        }
+
+        .hero-content h1 {
+            font-size: 3rem;
+        }
+
+        .feature-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <div class="hero-content">
+        <h1>Unleash Your Inner Athlete</h1>
+        <p>Discover fitness classes that redefine your limits and ignite your passion.</p>
+        <a href="{% url 'classes' %}" class="button">Explore Classes</a>
+    </div>
+</section>
+
+<section class="class-section container">
+    <h2 class="section-title">Featured Fitness Experiences</h2>
+    <p class="section-subtitle">Dive into our curated selection of transformative fitness sessions.</p>
+    <div class="class-grid">
+        <div class="class-card">
+            <div class="class-header">Yoga Reimagined</div>
+            <div class="class-body">
+                <p class="class-description">Experience yoga like never before, blending traditional poses with modern flow.</p>
+                <div class="class-meta"><i class="fas fa-calendar"></i><span>Monday, 9:00 AM</span></div>
+                <div class="class-meta"><i class="fas fa-user"></i><span>Sarah J.</span></div>
+            </div>
+            <div class="class-footer"><a href="#" class="button">Book Now</a></div>
+        </div>
+        <div class="class-card">
+            <div class="class-header">HIIT Revolution</div>
+            <div class="class-body">
+                <p class="class-description">Elevate your heart rate and redefine your strength with our dynamic HIIT workouts.</p>
+                <div class="class-meta"><i class="fas fa-calendar"></i><span>Tuesday, 6:00 PM</span></div>
+                <div class="class-meta"><i class="fas fa-user"></i><span>Mike C.</span></div>
+            </div>
+            <div class="class-footer"><a href="#" class="button">Join the Revolution</a></div>
+        </div>
+        <div class="class-card">
+            <div class="class-header">Pilates Unleashed</div>
+            <div class="class-body">
+                <p class="class-description">Unlock your core strength and flexibility with our innovative Pilates sessions.</p>
+                <div class="class-meta"><i class="fas fa-calendar"></i><span>Wednesday, 10:30 AM</span></div>
+                <div class="class-meta"><i class="fas fa-user"></i><span>Emma T.</span></div>
+            </div>
+            <div class="class-footer"><a href="#" class="button">Discover Pilates</a></div>
+        </div>
+        <div class="class-card">
+            <div class="class-header">Spin Intensity</div>
+            <div class="class-body">
+                <p class="class-description">Ride to your rhythm and push your limits in our high-energy spin classes.</p>
+                <div class="class-meta"><i class="fas fa-calendar"></i><span>Thursday, 7:00 PM</span></div>
+                <div class="class-meta"><i class="fas fa-user"></i><span>Alex R.</span></div>
+            </div>
+            <div class="class-footer"><a href="#" class="button">Spin Now</a></div>
+        </div>
+        <div class="class-card">
+            <div class="class-header">Boxing Blast</div>
+            <div class="class-body">
+                <p class="class-description">Punch your way to fitness and release stress in our dynamic boxing sessions.</p>
+                <div class="class-meta"><i class="fas fa-calendar"></i><span>Friday, 6:30 PM</span></div>
+                <div class="class-meta"><i class="fas fa-user"></i><span>Lisa P.</span></div>
+            </div>
+            <div class="class-footer"><a href="#" class="button">Join the Blast</a></div>
+        </div>
+        <div class="class-card">
+            <div class="class-header">Dance Fusion</div>
+            <div class="class-body">
+                <p class="class-description">Move to the beat and ignite your passion for dance in our fusion classes.</p>
+                <div class="class-meta"><i class="fas fa-calendar"></i><span>Saturday, 11:00 AM</span></div>
+                <div class="class-meta"><i class="fas fa-user"></i><span>Carlos M.</span></div>
+            </div>
+            <div class="class-footer"><a href="#" class="button">Dance Now</a></div>
+        </div>
+    </div>
+</section>
+
+<section class="feature-section container">
+    <h2 class="section-title">Why Choose Us?</h2>
+    <p class="section-subtitle">Experience the difference with our unparalleled fitness approach.</p>
+    <div class="feature-grid">
+        <div class="feature-box">
+            <div class="feature-icon"><i class="fas fa-dumbbell"></i></div>
+            <h3 class="feature-title">Limitless Variety</h3>
+            <p class="feature-description">From high-energy HIIT to calming yoga, find your perfect fit.</p>
+            <ul class="feature-list"><li>Yoga Mastery</li><li>HIIT Extreme</li><li>Strength Fusion</li></ul>
+        </div>
+        <div class="feature-box">
+            <div class="feature-icon"><i class="fas fa-user-tie"></i></div>
+            <h3 class="feature-title">Expert Guidance</h3>
+            <p class="feature-description">Our certified trainers are dedicated to your success and well-being.</p>
+            <ul class="feature-list"><li>Certified Pros</li><li>Personalized Plans</li><li>Motivation Hub</li></ul>
+        </div>
+        <div class="feature-box">
+            <div class="feature-icon"><i class="fas fa-laptop"></i></div>
+            <h3 class="feature-title">Seamless Experience</h3>
+            <p class="feature-description">Booking your classes has never been easier with our intuitive platform.</p>
+            <ul class="feature-list"><li>Easy Booking</li><li>Instant Confirm</li><li>Flex Reschedule</li></ul>
+        </div>
+    </div>
+</section>
+{% endblock %}

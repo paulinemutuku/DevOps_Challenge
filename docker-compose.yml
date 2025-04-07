@@ -1,0 +1,45 @@
+services:
+  db:
+    build:
+      context: .
+      dockerfile: docker/postgres/Dockerfile
+    ports:
+      - "8017:5432"  
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=django_db
+      - POSTGRES_USER=django_user
+      - POSTGRES_PASSWORD=django_password
+    restart: always
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/django/Dockerfile
+    ports:
+      - "8005:8000"  
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgres://django_user:django_password@db:5432/django_db
+      - DEBUG=0
+    restart: always
+
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    ports:
+      - "8012:80"  
+    depends_on:
+      - web
+    volumes:
+      - ./static:/app/staticfiles
+      - ./media:/app/media
+    restart: always
+
+volumes:
+  postgres_data:

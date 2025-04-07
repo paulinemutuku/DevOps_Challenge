@@ -1,0 +1,493 @@
+{% extends "booking/base.html" %}
+{% load static %}
+
+{% block title %}FitBook - About Us{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Hero Section */
+    .about-hero-section {
+        position: relative;
+        height: 70vh; 
+        min-height: 450px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start; 
+        padding: 60px 80px; 
+        overflow: hidden;
+        margin-bottom: 80px;
+        background: linear-gradient(135deg, rgba(220, 53, 69, 0.9), rgba(173, 18, 40, 0.9)); 
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); 
+        border-radius: 15px; 
+    }
+
+    .about-hero-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("/static/Images/sw3.webp"); 
+        background-size: cover;
+        background-position: center;
+        z-index: -2;
+        opacity: 0.3; 
+    }
+
+    .about-hero-content {
+        max-width: 600px;
+        z-index: 1;
+    }
+
+    .about-hero-content h1 {
+        font-size: 4rem;
+        margin-bottom: 30px;
+        font-weight: 800;
+        line-height: 1.2; 
+    }
+
+    .about-hero-content p {
+        font-size: 1.5rem;
+        margin-bottom: 40px;
+        line-height: 1.8;
+        opacity: 0.95;
+    }
+
+    .about-hero-button {
+        display: inline-block;
+        padding: 18px 40px;
+        background-color: white; 
+        color: rgba(173, 18, 40, 1); 
+        border: none;
+        border-radius: 35px;
+        font-weight: 600;
+        font-size: 1.2rem;
+        text-decoration: none;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        cursor: pointer;
+    }
+
+    .about-hero-button:hover {
+        background-color: #f0f0f0; 
+        transform: translateY(-5px);
+    }
+
+    /* Section Headers */
+    .section-header {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .section-header h2 {
+        font-size: 2.8rem; 
+        color: var(--dark-primary);
+        margin-bottom: 25px; 
+        position: relative;
+        display: inline-block;
+    }
+
+    .section-header h2:after {
+        content: "";
+        position: absolute;
+        bottom: -18px; 
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px; 
+        height: 5px; 
+        background-color: var(--secondary-color);
+        border-radius: 3px;
+    }
+
+    .section-header p {
+        font-size: 1.3rem; 
+        color: #666;
+        max-width: 900px;
+        margin: 25px auto 0; 
+        line-height: 1.8; 
+    }
+
+    .about-section {
+        padding: 100px 0;
+        background-color: #f8f8f8; 
+    }
+
+    .about-content {
+        display: grid; 
+        grid-template-columns: 1fr 1fr; 
+        gap: 60px;
+        max-width: 1200px;
+        margin: 0 auto;
+        align-items: center;
+    }
+
+    .about-text {
+        padding: 40px;
+        background-color: white; 
+        border-radius: 15px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .about-image {
+        text-align: center;
+    }
+
+    .about-image img {
+        width: 100%;
+        max-width: 550px; 
+        border-radius: 15px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .about-text h3 {
+        font-size: 2.6rem;
+        color: var(--dark-primary);
+        margin-bottom: 30px;
+        line-height: 1.4;
+        font-weight: 600;
+    }
+
+    .about-text p {
+        font-size: 1.2rem;
+        color: #555;
+        margin-bottom: 25px;
+        line-height: 1.8;
+    }
+
+    @media (max-width: 768px) {
+        .about-content {
+            grid-template-columns: 1fr; 
+        }
+
+        .about-text {
+            padding: 30px;
+        }
+    }
+
+    .team-section {
+        padding: 90px 0;
+        background-color: #fce8e6;
+    }
+
+    .team-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 40px; 
+        max-width: 1200px; 
+        margin: 0 auto; 
+    }
+
+    .team-card {
+        background-color: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .team-card:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .team-image {
+        width: 100%;
+        height: 350px; 
+        object-fit: cover;
+    }
+
+    .team-details {
+        padding: 30px;
+        text-align: center;
+    }
+
+    .team-name {
+        font-size: 1.8rem;
+        color: rgba(173, 18, 40, 1); 
+    }
+
+    .team-role {
+        font-size: 1.1rem;
+        color: #d9534f; 
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+
+    .team-bio {
+        font-size: 1.05rem;
+        color: #555;
+        margin-bottom: 25px;
+        line-height: 1.8;
+    }
+
+    .team-social {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .team-social a {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background-color: #f1f1f1;
+        color: #555;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .team-social a:hover {
+        background-color: #d9534f; 
+        color: white;
+    }
+
+    /* Section Headers */
+    .section-header {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .section-header h2 {
+        font-size: 3rem;
+        color: rgba(173, 18, 40, 1); 
+        margin-bottom: 25px;
+        position: relative;
+        display: inline-block;
+    }
+
+    .section-header h2:after {
+        content: "";
+        position: absolute;
+        bottom: -18px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 5px;
+        background-color: #d9534f; 
+        border-radius: 3px;
+    }
+
+    .section-header p {
+        font-size: 1.3rem;
+        color: #666;
+        max-width: 900px;
+        margin: 25px auto 0;
+        line-height: 1.8;
+    }
+
+    /* CTA Section */
+    .cta-section {
+        padding: 100px 0;
+        background-color: #f8f8f8; 
+        text-align: center;
+    }
+
+    .cta-container {
+        background-image: linear-gradient(135deg, rgba(220, 53, 69, 0.9), rgba(173, 18, 40, 0.9)), url('/static/Images/cta-background.jpg'); /* Red gradient overlay + background image */
+        background-size: cover;
+        background-position: center;
+        padding: 80px;
+        border-radius: 20px;
+        color: white;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        position: relative;
+        overflow: hidden; 
+    }
+
+    .cta-container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(220, 53, 69, 0.7), rgba(173, 18, 40, 0.7)); 
+        z-index: 0;
+        border-radius: 20px;
+    }
+
+    .cta-content {
+        position: relative;
+        z-index: 1; 
+    }
+
+    .cta-title {
+        font-size: 3rem;
+        margin-bottom: 25px;
+        font-weight: 800;
+        line-height: 1.2;
+    }
+
+    .cta-text {
+        font-size: 1.3rem;
+        margin-bottom: 40px;
+        max-width: 800px;
+        margin: 0 auto 40px;
+        line-height: 1.8;
+        opacity: 0.9;
+    }
+
+    .cta-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 25px;
+    }
+
+    .cta-button {
+        display: inline-block;
+        padding: 18px 40px;
+        border-radius: 35px;
+        font-weight: 600;
+        font-size: 1.2rem;
+        text-decoration: none;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .cta-button-primary {
+        background-color: white;
+        color: rgba(173, 18, 40, 1); 
+        border: none;
+    }
+
+    .cta-button-primary:hover {
+        background-color: #f0f0f0;
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .cta-button-secondary {
+        background-color: rgba(173, 18, 40, 1);
+        color: white;
+        border: none;
+    }
+
+    .cta-button-secondary:hover {
+        background-color: #b31228; 
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    @media (max-width: 768px) {
+        .cta-container {
+            padding: 60px;
+        }
+
+        .cta-title {
+            font-size: 2.5rem;
+        }
+
+        .cta-text {
+            font-size: 1.2rem;
+        }
+
+        .cta-buttons {
+            flex-direction: column;
+            gap: 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="about-hero-section">
+    <div class="about-hero-content">
+        <h1>Ignite Your Fitness Journey</h1>
+        <p>Unleash your potential with FitBook. Experience personalized training and achieve your goals with our expert guidance.</p>
+        <a href="{% url 'register' %}" class="about-hero-button">Join Our Community</a>
+    </div>
+</div>
+
+<!-- Our Story Section -->
+<section class="about-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>The Genesis of FitBook</h2>
+            <p>Exploring the origins and core values that power our community.</p>
+        </div>
+        
+        <div class="about-content">
+            <div class="about-text">
+                <h3>A Vision for Inclusive Fitness</h3>
+                <p>FitBook began its journey in 2020, driven by a simple yet powerful idea: to make high-quality fitness accessible to everyone, regardless of their background or experience. What started as a small, passionate team has evolved into a thriving community dedicated to health and well-being.</p>
+                <p>Our founding principle was to create a space where personalized guidance and expert instruction could be delivered in a group setting, fostering a supportive and motivating environment. This core belief continues to shape our approach to fitness and wellness.</p>
+            </div>
+            <div class="about-image">
+                <img src="/static/Images/sw3.webp" alt="FitBook studio interior">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Team Section -->
+<section class="team-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Our Expert Team</h2>
+            <p>Meet the passionate professionals driving your fitness journey</p>
+        </div>
+        
+        <div class="team-cards">
+            <div class="team-card">
+                <img src="/static/Images/image5.jpg" alt="Isabella Rossi" class="team-image">
+                <div class="team-details">
+                    <h3 class="team-name">Isabella Rossi</h3>
+                    <p class="team-role">Dynamic Flow Yoga</p>
+                    <p class="team-bio">Isabella brings a blend of traditional yoga and modern flow, focusing on strength and flexibility. Her classes are a journey of self-discovery.</p>
+                    <div class="team-social">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="team-card">
+                <img src="/static/Images/istock3.avif" alt="Ricardo Silva" class="team-image">
+                <div class="team-details">
+                    <h3 class="team-name">Ricardo Silva</h3>
+                    <p class="team-role">Strength & Conditioning Lead</p>
+                    <p class="team-bio">Ricardo's expertise in strength and conditioning empowers athletes and fitness enthusiasts alike. His tailored programs are designed for peak performance.</p>
+                    <div class="team-social">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="team-card">
+                <img src="/static/Images/istock1.jpg" alt="Aisha Khan" class="team-image">
+                <div class="team-details">
+                    <h3 class="team-name">Aisha Khan</h3>
+                    <p class="team-role">Pilates & Core Specialist</p>
+                    <p class="team-bio">Aisha's Pilates and core training classes are transformative, building strength from within and enhancing overall body awareness.</p>
+                    <div class="team-social">
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<div class="container">
+    <div class="cta-container">
+        <div class="cta-content">
+            <h2 class="cta-title">Transform Your Body, Ignite Your Life</h2>
+            <p class="cta-text">Embark on a fitness journey that redefines your limits and empowers you to achieve lasting results. Join our vibrant community and experience the difference.</p>
+            <div class="cta-buttons">
+                <a href="{% url 'classes' %}" class="cta-button cta-button-primary">Explore Our Classes</a>
+                <a href="{% url 'register' %}" class="cta-button cta-button-secondary">Start Your Transformation</a>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+{% endblock %}

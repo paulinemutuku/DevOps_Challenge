@@ -1,0 +1,839 @@
+{% extends "booking/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    /* Filter Section */
+    .filter-section {
+        background-color: #fce8e6; 
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 50px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); 
+    }
+
+    .filter-title {
+        font-size: 1.2rem;
+        color: #d9534f; 
+        margin-bottom: 20px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px; 
+        margin-bottom: 15px; 
+    }
+
+    .filter-btn {
+        background-color: white; 
+        border: 1px solid #f9caca; 
+        border-radius: 25px; 
+        padding: 8px 18px; 
+        font-size: 0.95rem; 
+        color: #773e38; 
+        cursor: pointer;
+        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; 
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+        background-color: #d9534f; 
+        color: white;
+        border-color: #d9534f; 
+    }
+
+    @media (max-width: 768px) {
+        .filter-group {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .filter-btn {
+            width: 100%;
+        }
+    }
+    
+    /* Class Count Badge */
+    .class-count {
+        background-color: var(--secondary-color);
+        color: white;
+        border-radius: 30px;
+        padding: 5px 15px;
+        font-size: 0.9rem;
+        display: inline-block;
+        margin-left: 15px;
+    }
+    
+    /* Animation for new classes */
+    .new-class-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background-color: var(--secondary-color);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        z-index: 2;
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+    
+    /* Promotional Banner */
+    .insight-section {
+        background-color: #fce8e6; 
+        padding: 80px 0;
+        border-radius: 20px;
+        margin-bottom: 50px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08); 
+    }
+
+    .insight-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 40px;
+    }
+
+    .insight-text {
+        width: 100%; 
+        text-align: left;
+    }
+
+    .insight-title {
+        font-size: 2.4rem;
+        font-weight: 700;
+        color: #d9534f; 
+        margin-bottom: 20px;
+        line-height: 1.3;
+    }
+
+    .insight-description {
+        font-size: 1.15rem;
+        color: #773e38; 
+        margin-bottom: 30px;
+        line-height: 1.7;
+    }
+
+    .insight-button {
+        display: inline-block;
+        padding: 15px 35px;
+        background-color: #d9534f; 
+        color: white;
+        border: none;
+        border-radius: 30px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .insight-button:hover {
+        background-color: #b31228; 
+        transform: translateY(-3px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    @media (max-width: 768px) {
+        .insight-container {
+            flex-direction: column;
+            padding: 0 20px;
+        }
+
+        .insight-text {
+            width: 100%;
+            text-align: center;
+        }
+
+        .insight-text {
+            margin-bottom: 30px;
+        }
+    }
+    
+    /* Testimonial Section */
+    .testimonial-section {
+        padding: 60px 0;
+        margin-top: 80px;
+        background-color: #fce8e6; 
+        border-radius: 20px;
+    }
+
+    .testimonial-card {
+        background-color: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
+        position: relative;
+        margin-top: 40px;
+        border: 2px solid #f9caca; 
+    }
+
+    .testimonial-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        position: absolute;
+        top: -40px;
+        left: 40px;
+        border: 5px solid white;
+        background-color: #f9caca; 
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .testimonial-avatar i {
+        font-size: 2.5rem;
+        color: #d9534f; 
+    }
+
+    .testimonial-content {
+        margin-top: 30px;
+        position: relative;
+    }
+
+    .testimonial-content::before {
+        content: "“"; 
+        position: absolute;
+        top: -45px;
+        left: -10px;
+        font-size: 5rem;
+        color: #f5b0ae; 
+        font-family: Georgia, serif;
+        line-height: 1;
+    }
+
+    .testimonial-text {
+        font-style: italic;
+        color: #773e38; 
+        margin-bottom: 25px;
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+
+    .testimonial-name {
+        font-weight: 600;
+        font-size: 1.2rem;
+        color: #d9534f; 
+    }
+
+    .testimonial-role {
+        color: #b31228; 
+        font-size: 1rem;
+    }
+    
+    /* Limited Spots Indicator */
+    .limited-spots {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+        border-radius: 5px;
+        padding: 8px 12px;
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+        font-size: 0.9rem;
+    }
+    
+    .limited-spots i {
+        margin-right: 8px;
+    }
+    
+    .spots-bar {
+        height: 5px;
+        background-color: #e9ecef;
+        border-radius: 3px;
+        margin-top: 5px;
+        overflow: hidden;
+    }
+    
+    .spots-progress {
+        height: 100%;
+        background-color: #dc3545;
+        border-radius: 3px;
+        width: 20%;
+    }
+    
+    /* Class difficulty indicators */
+    .difficulty-indicator {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .difficulty-dots {
+        display: flex;
+        margin-left: 10px;
+    }
+    
+    .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 4px;
+        background-color: #ddd;
+    }
+    
+    .dot.active {
+        background-color: var(--secondary-color);
+    }
+    
+    /* Class Cards styling */
+    .class-card {
+        background-color: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+        transition: all 0.4s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        border: none;
+    }
+
+    .class-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .class-header {
+        background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+        color: white;
+        padding: 20px;
+        font-weight: 600;
+        font-size: 1.2rem;
+    }
+
+    .class-body {
+        padding: 25px;
+        flex-grow: 1;
+    }
+
+    .class-meta {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+
+    .class-meta i {
+        color: var(--secondary-color);
+        margin-right: 10px;
+        font-size: 1.1rem;
+    }
+
+    .class-description {
+        margin-bottom: 20px;
+        color: #666;
+    }
+
+    .class-footer {
+        padding: 15px 25px 25px;
+    }
+
+    .button {
+        display: inline-block;
+        padding: 10px 30px;
+        background-color: var(--secondary-color);
+        color: white;
+        border: none;
+        border-radius: 30px;
+        font-weight: 600;
+        font-size: 1rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        width: 100%;
+        text-align: center;
+    }
+
+    .button:hover {
+        background-color: #d97c18;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        color: white;
+        text-decoration: none;
+    }
+
+    .button-danger {
+        background-color: #dc3545;
+    }
+
+    .button-danger:hover {
+        background-color: #bd2130;
+    }
+
+    .button-disabled {
+        background-color: #6c757d;
+        cursor: not-allowed;
+    }
+
+    .button-disabled:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    .badge-available {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+
+    .badge-full {
+        background-color: #dc3545;
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+
+    .section-header {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+
+    .section-header h1 {
+        font-size: 2.5rem;
+        color: var(--dark-primary);
+        margin-bottom: 20px;
+        position: relative;
+        display: inline-block;
+    }
+
+    .section-header h1:after {
+        content: "";
+        position: absolute;
+        bottom: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background-color: var(--secondary-color);
+    }
+    
+    /* Featured Classes Section */
+    .featured-section {
+        margin-bottom: 50px;
+    }
+    
+    .featured-tag {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: var(--accent-color);
+        color: white;
+        padding: 8px 15px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        border-top-left-radius: 15px;
+        border-bottom-right-radius: 15px;
+        z-index: 3;
+    }
+    
+    /* Load More Button */
+    .load-more-container {
+        text-align: center;
+        margin: 30px 0 50px;
+    }
+    
+    .load-more-btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 30px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .load-more-btn:hover {
+        background-color: var(--accent-color);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Loading animation */
+    .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255,255,255,.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+        margin-left: 10px;
+        vertical-align: middle;
+    }
+    
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="section-header">
+        <h1>Available Fitness Classes</h1>
+        <p>Find your perfect class and book your spot today!</p>
+    </div>
+    
+    <!-- Promotional Banner -->
+    <div class="insight-section">
+        <div class="insight-container">
+            <div class="insight-text">
+                <h2 class="insight-title">Unlock Your Fitness Potential</h2>
+                <p class="insight-description">Explore a world of tailored fitness insights and interactive tools designed to help you achieve your personal goals. Dive into personalized workout plans and track your progress with ease.</p>
+                <a href="#" class="insight-button">Start Your Journey</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Filter Section -->
+    <div class="filter-section">
+        <div class="row">
+            <div class="col-md-6">
+                <h3 class="filter-title">Explore Class Styles</h3>
+                <div class="filter-group">
+                    <button class="filter-btn active" data-filter="all">All Classes</button>
+                    <button class="filter-btn" data-filter="zenith">Zenith Flow</button>
+                    <button class="filter-btn" data-filter="pulse">Pulse Ignite</button>
+                    <button class="filter-btn" data-filter="core">Core Sculpt</button>
+                    <button class="filter-btn" data-filter="velocity">Velocity Ride</button>
+                    <button class="filter-btn" data-filter="forge">Iron Forge</button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h3 class="filter-title">Choose Your Time</h3>
+                <div class="filter-group">
+                    <button class="filter-btn active" data-time="all">All Times</button>
+                    <button class="filter-btn" data-time="dawn">Dawn Sessions</button>
+                    <button class="filter-btn" data-time="midday">Midday Burn</button>
+                    <button class="filter-btn" data-time="twilight">Twilight Focus</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+        
+        <!-- Load More Button -->
+        {% if has_more_classes %}
+        <div class="load-more-container">
+            <button id="load-more-btn" class="load-more-btn" data-offset="8">View More Classes</button>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Testimonial Section -->
+    <section class="testimonial-section mt-5">
+        <div class="container">
+            <div class="section-header">
+                <h2>Member Success Stories</h2>
+                <p>Real experiences, real results. See how our community thrives.</p>
+            </div>
+    
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <div class="testimonial-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="testimonial-content">
+                            <p class="testimonial-text">"Joining FitBook was a game-changer. The personalized yoga sessions helped me find balance and strength I never knew I had."</p>
+                            <div class="testimonial-name">Elena Rodriguez</div>
+                            <div class="testimonial-role">Fitness Enthusiast</div>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <div class="testimonial-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="testimonial-content">
+                            <p class="testimonial-text">"The HIIT workouts pushed me beyond my limits, and the results speak for themselves. I'm stronger, fitter, and more confident."</p>
+                            <div class="testimonial-name">David Kim</div>
+                            <div class="testimonial-role">Transformation Seeker</div>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <div class="testimonial-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="testimonial-content">
+                            <p class="testimonial-text">"FitBook's seamless booking and diverse classes made consistency easy. I look forward to my workouts every day!"</p>
+                            <div class="testimonial-name">Aisha Patel</div>
+                            <div class="testimonial-role">Daily Achiever</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Floating Booking Assistant -->
+    <div id="booking-assistant" style="position: fixed; bottom: 30px; right: 30px; background-color: var(--primary-color); color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2); cursor: pointer; z-index: 1000;">
+        <i class="fas fa-calendar-check" style="font-size: 1.5rem;"></i>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Filter functionality
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Update active state on buttons
+                const group = this.closest('.filter-group');
+                group.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Apply filters
+                applyFilters();
+            });
+        });
+        
+        function applyFilters() {
+            const categoryFilter = document.querySelector('.filter-btn[data-filter].active').getAttribute('data-filter');
+            const timeFilter = document.querySelector('.filter-btn[data-time].active').getAttribute('data-time');
+            
+            document.querySelectorAll('.class-card').forEach(card => {
+                const category = card.getAttribute('data-category');
+                const time = card.getAttribute('data-time');
+                
+                const matchesCategory = categoryFilter === 'all' || category === categoryFilter;
+                const matchesTime = timeFilter === 'all' || time === timeFilter;
+                
+                if (matchesCategory && matchesTime) {
+                    card.closest('.col').style.display = 'block';
+                } else {
+                    card.closest('.col').style.display = 'none';
+                }
+            });
+            
+            // Update class count
+            updateClassCount();
+        }
+        
+        function updateClassCount() {
+            const visibleClasses = document.querySelectorAll('.class-card[style="display: block"], .class-card:not([style*="display"])').length;
+            document.querySelector('.class-count').textContent = visibleClasses;
+        }
+        
+        // Add hover effect on class cards
+        function addHoverEffect() {
+            const classCards = document.querySelectorAll('.class-card');
+            classCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px)';
+                    this.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.15)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = '';
+                    this.style.boxShadow = '';
+                });
+            });
+        }
+        
+        // Initialize hover effect
+        addHoverEffect();
+        
+        // Load More functionality
+        const loadMoreBtn = document.getElementById('load-more-btn');
+        if (loadMoreBtn) {
+            loadMoreBtn.addEventListener('click', function() {
+                const offset = parseInt(this.getAttribute('data-offset'));
+                
+                // Show loading animation
+                this.innerHTML = 'Loading <span class="loading"></span>';
+                this.disabled = true;
+                
+                // Make AJAX request to load more classes
+                fetch(`/load-more-classes/?offset=${offset}&limit=6`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Add new classes to the container
+                        const container = document.getElementById('classes-container');
+                        
+                        data.classes.forEach(classData => {
+                            // Create class card HTML
+                            const classCard = createClassCard(classData);
+                            container.innerHTML += classCard;
+                        });
+                        
+                        // Update button state
+                        if (data.has_more) {
+                            loadMoreBtn.innerHTML = 'View More Classes';
+                            loadMoreBtn.disabled = false;
+                            loadMoreBtn.setAttribute('data-offset', data.next_offset);
+                        } else {
+                            // Hide button if no more classes
+                            loadMoreBtn.parentElement.style.display = 'none';
+                        }
+                        
+                        // Re-apply filters and event listeners to new cards
+                        applyFilters();
+                        addHoverEffect();
+                    })
+                    .catch(error => {
+                        console.error('Error loading more classes:', error);
+                        loadMoreBtn.innerHTML = 'Error Loading Classes';
+                        setTimeout(() => {
+                            loadMoreBtn.innerHTML = 'Try Again';
+                            loadMoreBtn.innerHTML = 'Try Again';
+                            loadMoreBtn.disabled = false;
+                        }, 2000);
+                    });
+            });
+        }
+        
+        function createClassCard(classData) {
+            // Create HTML for difficulty dots
+            let difficultyDots = `
+                <div class="difficulty-indicator">
+                    <small>Difficulty:</small>
+                    <div class="difficulty-dots">
+                        <div class="dot active"></div>
+                        <div class="dot ${classData.name === 'HIIT Workout' || classData.name === 'Strength Training' ? 'active' : ''}"></div>
+                        <div class="dot ${classData.name === 'HIIT Workout' ? 'active' : ''}"></div>
+                    </div>
+                </div>
+            `;
+            
+            // Create HTML for capacity/spots
+            let capacityHtml = '';
+            if (classData.is_full) {
+                capacityHtml = '<span class="badge-full">Full</span>';
+            } else {
+                capacityHtml = `<span class="badge-available">${classData.available_slots || '5'} Spots Available</span>`;
+            }
+            
+            // Create HTML for booking button
+            let bookingButton = '';
+            if (classData.is_booked) {
+                // This will need to be adjusted based on how you're tracking bookings
+                bookingButton = `<a href="/cancel-booking/${classData.booking_id}/" class="button button-danger">Cancel Booking</a>`;
+            } else if (!classData.is_full) {
+                bookingButton = `<a href="/book-class/${classData.id}/" class="button">Book Now</a>`;
+            } else {
+                bookingButton = `<button class="button button-disabled" disabled>Class Full</button>`;
+            }
+            
+            // Create the full card HTML
+            return `
+                <div class="col class-item">
+                    <div class="class-card" data-category="${classData.category || 'yoga'}" data-time="${classData.time_of_day || 'morning'}">
+                        <div class="class-header">
+                            ${classData.name}
+                        </div>
+                        <div class="class-body">
+                            <p class="class-description">${classData.description}</p>
+                            
+                            ${difficultyDots}
+                            
+                            <div class="class-meta">
+                                <i class="fas fa-calendar"></i>
+                                <span>${classData.date}</span>
+                            </div>
+                            <div class="class-meta">
+                                <i class="fas fa-clock"></i>
+                                <span>${classData.start_time} - ${classData.end_time}</span>
+                            </div>
+                            <div class="class-meta">
+                                <i class="fas fa-user"></i>
+                                <span>${classData.instructor}</span>
+                            </div>
+                            <div class="class-meta">
+                                <i class="fas fa-users"></i>
+                                <span>
+                                    <strong>Capacity: </strong>
+                                    ${capacityHtml}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="class-footer">
+                            ${bookingButton}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Floating Booking Assistant
+        const bookingAssistant = document.getElementById('booking-assistant');
+        let isExpanded = false;
+        
+        bookingAssistant.addEventListener('click', function() {
+            if (!isExpanded) {
+                this.innerHTML = `
+                    <div style="width: 220px; text-align: left; padding: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <strong>Need Help?</strong>
+                            <i class="fas fa-times" id="close-assistant"></i>
+                        </div>
+                        <div style="font-size: 0.9rem; margin-bottom: 10px;">Looking for a specific class or time?</div>
+                        <button class="btn btn-sm btn-light w-100 mb-2">Find Perfect Class</button>
+                        <button class="btn btn-sm btn-outline-light w-100">Contact Us</button>
+                    </div>
+                `;
+                this.style.width = '250px';
+                this.style.height = 'auto';
+                this.style.borderRadius = '15px';
+                this.style.right = '20px';
+                isExpanded = true;
+                
+                document.getElementById('close-assistant').addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    collapseAssistant();
+                });
+            }
+        });
+        
+        function collapseAssistant() {
+            bookingAssistant.innerHTML = '<i class="fas fa-calendar-check" style="font-size: 1.5rem;"></i>';
+            bookingAssistant.style.width = '60px';
+            bookingAssistant.style.height = '60px';
+            bookingAssistant.style.borderRadius = '50%';
+            isExpanded = false;
+        }
+        
+        // Add animation effects
+        setTimeout(function() {
+            const promoButton = document.querySelector('.promo-btn');
+            if (promoButton) {
+                promoButton.classList.add('animate__animated', 'animate__pulse');
+                promoButton.style.animationIterationCount = 'infinite';
+                promoButton.style.animationDuration = '2s';
+            }
+        }, 2000);
+    });
+</script>
+{% endblock %}

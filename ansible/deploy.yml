@@ -1,0 +1,223 @@
+---
+- name: Deploy Fitness Booking Application
+  hosts: all
+  become: yes
+  vars:
+    app_name: fitness_booking
+    app_dir: "/opt/{{ app_name }}"
+    venv_dir: "{{ app_dir }}/venv"
+    git_repo: "https://github.com/paulinemutuku/DevOps_Challenge.git"
+    branch: main
+    django_settings_module: "fitness_booking.settings"
+    domain_name: "fitness.example.com"
+    docker_registry: "localhost:5000"
+    docker_image: "{{ docker_registry }}/fitness_booking"
+    docker_tag: "{{ lookup('env', 'BUILD_NUMBER') | default('latest', true) }}"
+    nginx_port: 8080  
+    django_port: 8000
+    postgres_port: 5432
+    mailhog_port: 8026
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install required system packages
+      apt:
+        name:
+          - python3
+          - python3-pip
+          - python3-venv
+          - postgresql
+          - postgresql-contrib
+          - nginx
+          - git
+          - docker.io
+          - docker-compose
+        state: present
+
+    - name: Ensure PostgreSQL service is running
+      service:
+        name: postgresql
+        state: started
+        enabled: yes
+
+    - name: Create PostgreSQL database
+      become: yes
+      become_user: postgres
+      postgresql_db:
+        name: "{{ app_name }}"
+        state: present
+
+    - name: Create PostgreSQL user
+      become: yes
+      become_user: postgres
+      postgresql_user:
+        db: "{{ app_name }}"
+        name: "{{ app_name }}_user"
+        password: "{{ lookup('env', 'DB_PASSWORD') }}"
+        priv: "ALL"
+        state: present
+
+    - name: Create application directory
+      file:
+        path: "{{ app_dir }}"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
+
+    - name: Pull Docker Images
+      docker_image:
+        name: "{{ docker_image }}:{{ docker_tag }}"
+        source: pull
+        force_source: yes
+
+    - name: Create .env file for Docker
+      template:
+        src: env.j2
+        dest: "{{ app_dir }}/.env"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0600'
+      
+    - name: Create docker-compose.yml
+      template:
+        src: docker-compose.yml.j2
+        dest: "{{ app_dir }}/docker-compose.yml"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0644'
+
+    - name: Start Docker containers
+      docker_compose:
+        project_src: "{{ app_dir }}"
+        state: present
+        build: yes
+        remove_orphans: yes
+      register: docker_compose_result
+
+    - name: Wait for application to be ready
+      wait_for:
+        port: "{{ nginx_port }}"
+        timeout: 30
+      when: docker_compose_result.changed
+
+    - name: Check application health
+      uri:
+        url: "http://localhost:{{ nginx_port }}/health/"
+        method: GET
+        status_code: 200
+      register: health_check
+      until: health_check.status == 200
+      retries: 5
+      delay: 5
+      when: docker_compose_result.changed
+
+    - name: Clone or update Git repository
+      git:
+        repo: "{{ git_repo }}"
+        dest: "{{ app_dir }}"
+        version: "{{ branch }}"
+        update: yes
+      when: not docker_compose_result.changed
+      become: yes
+      become_user: "{{ ansible_user }}"
+
+    - name: Create Python virtual environment
+      command: python3 -m venv {{ venv_dir }}
+      args:
+        creates: "{{ venv_dir }}/bin/activate"
+      when: not docker_compose_result.changed
+
+    - name: Install Python dependencies
+      pip:
+        requirements: "{{ app_dir }}/requirements.txt"
+        virtualenv: "{{ venv_dir }}"
+      when: not docker_compose_result.changed
+
+    - name: Create .env file for Django
+      template:
+        src: env.j2
+        dest: "{{ app_dir }}/.env"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0600'
+      when: not docker_compose_result.changed
+
+    - name: Run Django migrations
+      command: "{{ venv_dir }}/bin/python manage.py migrate"
+      args:
+        chdir: "{{ app_dir }}"
+      environment:
+        DJANGO_SETTINGS_MODULE: "{{ django_settings_module }}"
+      when: not docker_compose_result.changed
+
+    - name: Collect static files
+      command: "{{ venv_dir }}/bin/python manage.py collectstatic --noinput"
+      args:
+        chdir: "{{ app_dir }}"
+      environment:
+        DJANGO_SETTINGS_MODULE: "{{ django_settings_module }}"
+      when: not docker_compose_result.changed
+
+    - name: Create Gunicorn service
+      template:
+        src: gunicorn.service.j2
+        dest: /etc/systemd/system/{{ app_name }}.service
+      when: not docker_compose_result.changed
+      notify: Restart Gunicorn
+
+    - name: Enable and start Gunicorn service
+      systemd:
+        name: "{{ app_name }}"
+        state: started
+        enabled: yes
+        daemon_reload: yes
+      when: not docker_compose_result.changed
+
+    - name: Create Nginx site configuration
+      template:
+        src: nginx_site.j2
+        dest: /etc/nginx/sites-available/{{ app_name }}
+      notify: Restart Nginx
+
+    - name: Enable Nginx site
+      file:
+        src: /etc/nginx/sites-available/{{ app_name }}
+        dest: /etc/nginx/sites-enabled/{{ app_name }}
+        state: link
+      notify: Restart Nginx
+
+    - name: Remove default Nginx site
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+      notify: Restart Nginx
+      ignore_errors: yes
+
+    - name: Set up UFW firewall
+      ufw:
+        rule: allow
+        name: "{{ item }}"
+      loop:
+        - OpenSSH
+        - "Nginx Full"
+      
+    - name: Enable UFW
+      ufw:
+        state: enabled
+        policy: deny
+
+  handlers:
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted
+
+    - name: Restart Gunicorn
+      systemd:
+        name: "{{ app_name }}"
+        state: restarted

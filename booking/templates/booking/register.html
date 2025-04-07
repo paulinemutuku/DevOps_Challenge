@@ -1,0 +1,133 @@
+{% extends "booking/base.html" %}
+{% block content %}
+<div class="container my-5 py-4">
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header" style="background: linear-gradient(to right, var(--primary-color), var(--accent-color)); color: white;">
+                <h2 class="text-center mb-0">Create an Account</h2>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" {% if form.username.value %}value="{{ form.username.value }}"{% endif %} required>
+                            {% if form.username.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.username.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" {% if form.email.value %}value="{{ form.email.value }}"{% endif %} required>
+                            {% if form.email.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.email.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label for="first_name" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="first_name" name="first_name" {% if form.first_name.value %}value="{{ form.first_name.value }}"{% endif %}>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="last_name" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="last_name" name="last_name" {% if form.last_name.value %}value="{{ form.last_name.value }}"{% endif %}>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label for="password1" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password1" name="password1" required>
+                            {% if form.password1.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.password1.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="password2" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="password2" name="password2" required>
+                            {% if form.password2.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.password2.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="terms" name="terms" required>
+                        <label class="form-check-label" for="terms">I agree to the Terms and Conditions</label>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="button" style="background-color: var(--secondary-color); color: white; padding: 10px 0; border: none; border-radius: 30px; font-weight: 600; transition: all 0.3s ease;">Register</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center py-3">
+                <p class="mb-0">Already have an account? <a href="{% url 'login' %}" style="color: var(--primary-color); text-decoration: none; font-weight: 600;">Login here</a></p>
+            </div>
+        </div>
+        
+        <div class="card mt-4 shadow-sm border-0">
+            <div class="card-body">
+                <h5 class="card-title" style="color: var(--dark-primary);">Password Requirements</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item border-0 ps-0"><i class="fas fa-check-circle me-2" style="color: var(--secondary-color);"></i> Your password must contain at least 8 characters</li>
+                    <li class="list-group-item border-0 ps-0"><i class="fas fa-check-circle me-2" style="color: var(--secondary-color);"></i> Your password can't be a commonly used password</li>
+                    <li class="list-group-item border-0 ps-0"><i class="fas fa-check-circle me-2" style="color: var(--secondary-color);"></i> Your password can't be entirely numeric</li>
+                    <li class="list-group-item border-0 ps-0"><i class="fas fa-check-circle me-2" style="color: var(--secondary-color);"></i> Your password can't be similar to your other personal information</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Add hover effect to register button
+    document.addEventListener('DOMContentLoaded', function() {
+        const registerBtn = document.querySelector('.button');
+        
+        registerBtn.addEventListener('mouseenter', function() {
+            this.style.backgroundColor = '#d97c18'; // Darker shade of secondary color
+            this.style.transform = 'translateY(-3px)';
+            this.style.boxShadow = '0 10px 20px rgba(0, 0, 0, 0.1)';
+        });
+        
+        registerBtn.addEventListener('mouseleave', function() {
+            this.style.backgroundColor = 'var(--secondary-color)';
+            this.style.transform = '';
+            this.style.boxShadow = '';
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}
