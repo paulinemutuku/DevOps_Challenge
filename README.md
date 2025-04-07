@@ -11,34 +11,6 @@ FitMe is a Django-powered fitness class booking system designed for streamlined 
 - End-to-end CI/CD with GitHub Actions  
 - Seamless deployment with Ansible  
 
-## Project Structure
-
-fitme/
-├── docker/
-│   ├── django/
-│   │   └── Dockerfile
-│   ├── nginx/
-│   │   ├── Dockerfile
-│   │   └── nginx.conf
-│   └── postgres/
-│       └── Dockerfile
-├── ansible/
-│   ├── deploy.yml
-│   ├── env.j2
-│   └── docker-compose.yml.j2
-├── .github/
-│   └── workflows/
-│       └── main.yml
-├── fitness_booking/
-│   ├── __init__.py
-│   ├── settings.py
-│   ├── urls.py
-│   └── wsgi.py
-├── manage.py
-├── requirements.txt
-├── docker-compose.yml
-└── .env
-
 ## Requirements
 
 - Docker & Docker Compose  
