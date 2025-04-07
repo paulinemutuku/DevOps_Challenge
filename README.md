@@ -23,7 +23,7 @@ FitMe is a Django-powered fitness class booking system designed for streamlined 
 ## Running Locally
 
 1. Clone the repository:
-   git clone https://github.com/your-username/fitme.git
+   git clone https://github.com/paulinemutuku/DevOps_Challenge.git
    cd fitme
 
 2. Set up your environment variables:
