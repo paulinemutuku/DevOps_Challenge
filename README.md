@@ -7,38 +7,71 @@ A Django-based fitness class booking system with Docker containerization, CI/CD 
 - User authentication (registration/login)
 - Database persistence with PostgreSQL
 - Email notifications for bookings and reminders
-- Docker containerization
-- CI/CD pipeline with GitHub Actions
-- Automated deployment with Ansible
+- Docker containerization for easy setup and deployment
+- Robust CI/CD pipeline with GitHub Actions for automated builds and testing
+- Automated deployment with Ansible for streamlined server management
 
 ## Project Structure
 
 ```
-fitness_booking/
-├── docker/
-│   ├── django/
-│   │   └── Dockerfile
-│   ├── nginx/
-│   │   ├── Dockerfile
-│   │   └── nginx.conf
-│   └── postgres/
-│       └── Dockerfile
-├── ansible/
-│   ├── deploy.yml
-│   ├── env.j2
-│   └── docker-compose.yml.j2
-├── .github/
-│   └── workflows/
-│       └── main.yml
-├── fitness_booking/
-│   ├── __init__.py
-│   ├── settings.py
-│   ├── urls.py
-│   └── wsgi.py
-├── manage.py
-├── requirements.txt
-├── docker-compose.yml
-└── .env
+.
+├── .github/                                 # GitHub Actions and CI/CD configuration
+│   ├── workflows/
+│   │   ├── main.yml                          # Primary workflow for deployment
+│   │   └── test.yml                          # Workflow for testing
+├── ansible/                                  # Ansible playbooks and templates
+│   ├── deploy.yml                            # Ansible playbook for deployment
+│   ├── docker-compose.yml.j2                 # Docker Compose template for deployment
+│   ├── inventory.yml                         # Ansible inventory
+│   ├── templates/                            # Jinja2 templates used in Ansible
+│   │   ├── docker-compose.yml.j2             # Docker Compose template
+│   │   ├── env.j2                            # Environment variable template
+│   │   ├── gunicorn.service.j2               # Gunicorn service template
+│   │   └── nginx_site.j2                     # Nginx site configuration template
+├── booking/                                  # Django application for bookings
+│   ├── migrations/                           # Django migrations
+│   ├── models.py                             # Models for booking
+│   ├── views.py                              # Views for booking
+│   ├── urls.py                               # URL routing for booking
+│   ├── forms.py                              # Forms for booking
+│   ├── admin.py                              # Admin configuration
+│   ├── signals.py                            # Signals for booking app
+│   ├── management/                           # Custom management commands
+│   │   └── commands/                         # Management commands
+│   │       └── create_user_profiles.py       # Custom command for creating user profiles
+│   ├── templates/                            # HTML templates for booking pages
+│   │   └── booking/                          # Booking-specific templates
+│   │       ├── about.html                    # About page
+│   │       ├── book_class.html               # Booking a class page
+│   │       └── my_bookings.html              # View bookings page
+│   ├── static/                               # Static files like images, CSS, JS
+│   │   ├── css/                              # CSS files
+│   │   ├── js/                               # JS files
+│   │   └── Images/                           # Image files
+├── fitness_booking/                          # Project settings and core files
+│   ├── init.py                               # Initialization file for the project
+│   ├── settings.py                           # Django settings
+│   ├── urls.py                               # URL routing for the whole project
+│   ├── wsgi.py                               # WSGI configuration
+├── docker/                                   # Docker configurations
+│   ├── django/                               # Django Dockerfile
+│   │   └── Dockerfile                        # Dockerfile for the Django app
+│   ├── nginx/                                # Nginx configuration for reverse proxy
+│   │   └── nginx.conf                        # Nginx config file
+│   ├── postgres/                             # PostgreSQL Dockerfile
+│   │   └── Dockerfile                        # Dockerfile for PostgreSQL
+├── manage.py                                 # Django project manager script
+├── requirements.txt                          # Python dependencies
+├── Dockerfile                                # Dockerfile for the whole project
+├── docker-compose.yml                        # Docker Compose configuration
+├── .gitignore                                # Git ignore rules
+├── .env.example                              # Example environment variables
+├── .flake8                                   # Linter configuration
+├── coverage.xml                              # Test coverage report
+├── conftest.py                               # Pytest configuration
+├── pytest.ini                                # Pytest settings
+├── README.md                                 # Project readme
+└── run_django_tests.py                       # Script to run tests
 ```
 
 ## Prerequisites
@@ -54,14 +87,13 @@ fitness_booking/
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/GanzAfrica/fitness_booking.git
-   cd fitness_booking
+   git clone https://github.com/paulinemutuku/DevOps_Challenge.git
+   cd DevOps_Challenge
    ```
 
 2. Create and configure `.env` file:
    ```bash
    cp .env.example .env
-   # Edit .env with your configuration
    ```
 
 3. Build and run with Docker Compose:
@@ -71,47 +103,53 @@ fitness_booking/
    ```
 
 4. Access the application:
-   - Main application: http://localhost:80
-   - Django admin: http://localhost:80/admin
-   - API endpoints: http://localhost:80/api/
+
+- Main application: [http://localhost:80](http://localhost:80)  
+- Django admin: [http://localhost:80/admin](http://localhost:80/admin)  
+- API endpoints: [http://localhost:80/api/](http://localhost:80/api/)
 
 ## CI/CD Pipeline
 
-The project uses GitHub Actions for continuous integration and deployment:
+The project utilizes GitHub Actions for seamless continuous integration and deployment:
 
-1. Code Quality Check:
-   - Flake8 for linting
-   - Black for code formatting
-   - isort for import sorting
+### Code Quality Check:
 
-2. Testing:
-   - Django test suite
-   - Integration tests
+- Flake8 for linting  
+- Black for code formatting  
+- isort for import sorting  
 
-3. Docker Build and Push:
-   - Build Docker images
-   - Push to Docker Hub
+### Testing:
 
-### GitHub Actions Setup
+- Django test suite  
+- Integration tests  
 
-1. Add Docker Hub credentials to GitHub Secrets:
-   - `DOCKERHUB_USERNAME`: Your Docker Hub username
-   - `DOCKERHUB_TOKEN`: Your Docker Hub access token
+### Docker Build and Push:
 
-2. The workflow will automatically:
-   - Run code quality checks
-   - Run tests
-   - Build and push Docker images to Docker Hub
-   - Trigger deployment (on main branch)
+- Build Docker images  
+- Push to Docker Hub  
+
+## GitHub Actions Setup
+
+Add Docker Hub credentials to GitHub Secrets:
+
+- `DOCKERHUB_USERNAME`: Your Docker Hub username  
+- `DOCKERHUB_TOKEN`: Your Docker Hub access token  
+
+The workflow will automatically:
+
+- Run code quality checks  
+- Execute tests  
+- Build and push Docker images to Docker Hub  
+- Trigger deployment (on `main` branch)
 
 ## Deployment
 
-The application can be deployed using Ansible:
+The application can be deployed using Ansible for automated server configuration:
 
 1. Configure your inventory file:
    ```bash
-   cp ansible/inventory.ini.example ansible/inventory.ini
-   # Edit inventory.ini with your server details
+   cp ansible/inventory.yml.example ansible/inventory.yml
+   # Edit inventory.yml with your server details
    ```
 
 2. Set up environment variables:
@@ -122,39 +160,46 @@ The application can be deployed using Ansible:
 
 3. Run the deployment:
    ```bash
-   ansible-playbook -i ansible/inventory.ini ansible/deploy.yml
+   ansible-playbook -i ansible/inventory.yml ansible/deploy.yml
    ```
 
-### Server Configuration
+## Server Configuration
 
 The application is configured to run on:
-- Server IP: 64.23.210.235
-- Nginx Port: 8080 (assigned port)
-- Django Port: 8000 (internal)
-- PostgreSQL Port: 5432 (internal)
+
+- Server IP: `64.23.210.235`  
+- Nginx Port: `8080` (assigned port)  
+- Django Port: `8000` (internal)  
+- PostgreSQL Port: `5432` (internal)  
 
 Access the deployed application at:
-- Main application: http://64.23.210.235:8080
-- Django admin: http://64.23.210.235:8080/admin
-- API endpoints: http://64.23.210.235:8080/api/
+
+- Main application: [http://64.23.210.235:8080](http://64.23.210.235:8080)  
+- Django admin: [http://64.23.210.235:8080/admin](http://64.23.210.235:8080/admin)  
+- API endpoints: [http://64.23.210.235:8080/api/](http://64.23.210.235:8080/api/)
 
 ## Environment Variables
 
 Required environment variables:
-- `DJANGO_SECRET_KEY`
-- `DJANGO_DEBUG`
-- `DATABASE_URL`
-- `EMAIL_HOST`
-- `EMAIL_PORT`
-- `EMAIL_HOST_USER`
-- `EMAIL_HOST_PASSWORD`
-- `EMAIL_USE_TLS`
+
+- `DJANGO_SECRET_KEY`  
+- `DJANGO_DEBUG`  
+- `DATABASE_URL`  
+- `EMAIL_HOST`  
+- `EMAIL_PORT`  
+- `EMAIL_HOST_USER`  
+- `EMAIL_HOST_PASSWORD`  
+- `EMAIL_USE_TLS`  
 - `DB_PASSWORD` (for Ansible deployment)
 
 ## Contributing
 
-1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+1. Fork the repository  
+2. Create your feature branch  
+3. Commit your changes  
+4. Push to the branch  
+5. Create a Pull Request  
+
+## Author
+
+**Pauline Mutuku**
