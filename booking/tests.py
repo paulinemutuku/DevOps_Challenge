@@ -39,10 +39,8 @@ class FitnessClassModelTest(TestCase):
         self.assertEqual(str(self.fitness_class), "Yoga - 2025-03-15 10:00:00")
 
     def test_is_full_property(self):
-        # Class should not be full initially
         self.assertFalse(self.fitness_class.is_full)
 
-        # Create users and bookings to fill the class
         for i in range(10):
             user = User.objects.create_user(
                 username=f"testuser{i}",
@@ -51,7 +49,6 @@ class FitnessClassModelTest(TestCase):
             )
             Booking.objects.create(user=user, fitness_class=self.fitness_class)
 
-        # Class should now be full
         self.assertTrue(self.fitness_class.is_full)
 
 
@@ -65,7 +62,6 @@ class UserProfileModelTest(TestCase):
         self.profile = UserProfile.objects.get(user=self.user)
 
     def test_profile_creation(self):
-        # Test that profile is automatically created
         self.assertIsNotNone(self.profile)
         self.assertEqual(self.profile.user, self.user)
 
@@ -73,13 +69,11 @@ class UserProfileModelTest(TestCase):
         self.assertEqual(str(self.profile), "profiletestuser")
 
     def test_profile_update(self):
-        # Test updating profile
         self.profile.phone = "1234567890"
         self.profile.bio = "Test bio"
         self.profile.preferred_categories = "yoga,pilates"
         self.profile.save()
 
-        # Refresh from db
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.phone, "1234567890")
         self.assertEqual(self.profile.bio, "Test bio")
@@ -117,7 +111,6 @@ class BookingModelTest(TestCase):
         self.assertEqual(str(self.booking), expected)
 
     def test_unique_constraint(self):
-        # Attempt to create a duplicate booking
         with self.assertRaises(Exception):
             Booking.objects.create(
                 user=self.user,
@@ -145,7 +138,6 @@ class FormTests(TestCase):
         self.assertTrue(form.is_valid())
 
     def test_user_register_form_invalid(self):
-        # Password mismatch
         form_data = {
             "username": "newtestuser",
             "email": "newtest@example.com",
@@ -163,26 +155,22 @@ class FormTests(TestCase):
         self.assertTrue(form.is_valid())
 
     def test_booking_form_valid(self):
-        # BookingForm has no fields, so we need to test it differently
         form = BookingForm(data={})
-        self.assertTrue(form.is_valid())  # Should be valid with empty data dictionary
+        self.assertTrue(form.is_valid())  
 
 
 class BookingViewsTest(TestCase):
     def setUp(self):
-        # Create a test user
         self.user = User.objects.create_user(
             username="testuser_views",
             email="testuser_views@example.com",
             password="testpassword",
         )
 
-        # Get or create the UserProfile (to handle the case where it might already exist)
         self.user_profile, created = UserProfile.objects.get_or_create(
             user=self.user, defaults={"phone": "1234567890"}
         )
 
-        # Create a fitness class
         self.fitness_class = FitnessClass.objects.create(
             name="Pilates",
             description="Core strength training",
@@ -194,10 +182,8 @@ class BookingViewsTest(TestCase):
             category="pilates",
         )
 
-        # Create a client for testing
         self.client = Client()
 
-        # Set up client HTTP_HOST for all tests to prevent email sending errors
         self.client.defaults = {"HTTP_HOST": "testserver"}
 
     def test_home_view(self):
@@ -207,20 +193,16 @@ class BookingViewsTest(TestCase):
         self.assertContains(response, "Pilates")
 
     def test_about_view(self):
-        # Test the about page view
         response = self.client.get(reverse("about"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "booking/about.html")
 
     def test_classes_view_requires_login(self):
-        # Should redirect if not logged in
         response = self.client.get(reverse("classes"))
         self.assertEqual(response.status_code, 302)
 
-        # Check redirect URL contains login
         self.assertIn("login", response.url)
 
-        # Log in and try again
         self.client.login(username="testuser_views", password="testpassword")
         response = self.client.get(reverse("classes"))
         self.assertEqual(response.status_code, 200)
@@ -229,26 +211,18 @@ class BookingViewsTest(TestCase):
     def test_classes_view_with_filters(self):
         self.client.login(username="testuser_views", password="testpassword")
 
-        # Test with category filter
         response = self.client.get(reverse("classes"), {"category": "pilates"})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Pilates")
 
-        # Test with search query
         response = self.client.get(reverse("classes"), {"query": "Core"})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Pilates")
 
-        # Test with non-matching query - our original test expected "Pilates" to
-        # not be in the response, but it appears the app still shows all classes
-        # when there are no matches. Let's adapt the test to match actual behavior.
         response = self.client.get(reverse("classes"), {"query": "Nonexistent"})
         self.assertEqual(response.status_code, 200)
-        # Instead of checking for absence, we could check for presence of "No matches found" message
-        # or simply check the response is successful
 
     def test_load_more_classes(self):
-        # Create 10 more classes to test pagination
         for i in range(10):
             FitnessClass.objects.create(
                 name=f"Test Class {i}",
@@ -269,9 +243,8 @@ class BookingViewsTest(TestCase):
             url = reverse("load_more_classes")
         except NoReverseMatch:
             # If that doesn't work, use a hardcoded URL based on your views.py
-            url = "/load-more-classes/"  # Adjust this to match your actual URL pattern
+            url = "/load-more-classes/"  
 
-        # Make the request using the URL we determined
         try:
             response = self.client.get(
                 url,
@@ -279,10 +252,8 @@ class BookingViewsTest(TestCase):
                 HTTP_X_REQUESTED_WITH="XMLHttpRequest",
             )
 
-            # Check basic response
             self.assertTrue(response.status_code in [200, 404])
 
-            # If we got a valid response, check its structure
             if (
                 response.status_code == 200
                 and response.get("Content-Type") == "application/json"
@@ -290,31 +261,24 @@ class BookingViewsTest(TestCase):
                 data = response.json()
                 self.assertIn("classes", data)
         except Exception as e:
-            # If there's any error, log it but don't fail the test
             print(f"Error in load_more_classes test: {e}")
-            # Test passes regardless of exceptions
             pass
 
     @patch("booking.views.send_mail")
     def test_book_class(self, mock_send_mail):
         self.client.login(username="testuser_views", password="testpassword")
 
-        # Initially, no bookings should exist
         self.assertEqual(Booking.objects.count(), 0)
 
-        # Book a class
         response = self.client.post(reverse("book_class", args=[self.fitness_class.id]))
 
-        # Should have created a booking
         self.assertEqual(Booking.objects.count(), 1)
         booking = Booking.objects.first()
         self.assertEqual(booking.user, self.user)
         self.assertEqual(booking.fitness_class, self.fitness_class)
 
-        # Verify that send_mail was called (since we've patched it)
         mock_send_mail.assert_called_once()
 
-        # Should redirect to confirmation page
         self.assertRedirects(
             response, reverse("booking_confirmation", args=[booking.id])
         )
@@ -322,26 +286,21 @@ class BookingViewsTest(TestCase):
     def test_book_class_already_booked(self):
         self.client.login(username="testuser_views", password="testpassword")
 
-        # Create a booking first
         Booking.objects.create(
             user=self.user,
             fitness_class=self.fitness_class,
         )
 
-        # Try to book the same class again
         response = self.client.post(reverse("book_class", args=[self.fitness_class.id]))
 
-        # Should still have only one booking
         self.assertEqual(Booking.objects.count(), 1)
 
-        # Should redirect to classes page with a warning message
         self.assertRedirects(response, reverse("classes"))
 
     def test_book_class_when_full(self):
         self.client.login(username="testuser_views", password="testpassword")
 
-        # Fill up the class with bookings
-        for i in range(5):  # Capacity is 5
+        for i in range(5):  
             if i == 0:
                 user = self.user
             else:
@@ -355,7 +314,6 @@ class BookingViewsTest(TestCase):
                 fitness_class=self.fitness_class,
             )
 
-        # Try to book the class again with a new user
         new_user = User.objects.create_user(
             username="newuser",
             email="new@example.com",
@@ -365,77 +323,59 @@ class BookingViewsTest(TestCase):
 
         response = self.client.post(reverse("book_class", args=[self.fitness_class.id]))
 
-        # Should still have only 5 bookings
         self.assertEqual(Booking.objects.count(), 5)
 
-        # Should redirect to classes page with a warning message
         self.assertRedirects(response, reverse("classes"))
 
     @patch("booking.views.send_mail")
     def test_cancel_booking(self, mock_send_mail):
         self.client.login(username="testuser_views", password="testpassword")
-
-        # Create a booking first
         booking = Booking.objects.create(
             user=self.user,
             fitness_class=self.fitness_class,
         )
 
-        # Get the cancel booking page
         response = self.client.get(reverse("cancel_booking", args=[booking.id]))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "booking/cancel_booking.html")
 
-        # Cancel the booking
         response = self.client.post(reverse("cancel_booking", args=[booking.id]))
 
-        # Verify that send_mail was called for cancellation email
         mock_send_mail.assert_called_once()
 
-        # Should have no bookings now
         self.assertEqual(Booking.objects.count(), 0)
 
-        # Should redirect to classes page
         self.assertRedirects(response, reverse("classes"))
 
     def test_my_bookings_view(self):
         self.client.login(username="testuser_views", password="testpassword")
 
-        # Create a booking
         booking = Booking.objects.create(
             user=self.user,
             fitness_class=self.fitness_class,
         )
 
-        # Access my_bookings page
         response = self.client.get(reverse("my_bookings"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "booking/my_bookings.html")
         self.assertContains(response, "Pilates")
 
     def test_my_bookings_with_no_bookings(self):
-        # Test the my_bookings view when the user has no bookings
         self.client.login(username="testuser_views", password="testpassword")
 
-        # Access my_bookings page with no bookings
         response = self.client.get(reverse("my_bookings"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "booking/my_bookings.html")
 
-        # Instead of checking for specific text that might not be in your template,
-        # we'll just verify the response is successful and contains some expected HTML structure
         self.assertIn(b"<html", response.content)
         self.assertIn(b"</html>", response.content)
-        # Test passes regardless of content
 
     @patch("booking.views.send_mail")
     def test_register_view(self, mock_send_mail):
-        # Access register page
         response = self.client.get(reverse("register"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "booking/register.html")
 
-        # Register a new user
         response = self.client.post(
             reverse("register"),
             {
@@ -446,13 +386,10 @@ class BookingViewsTest(TestCase):
             },
         )
 
-        # Verify that send_mail was called for welcome email
         mock_send_mail.assert_called_once()
 
-        # Should redirect to login page
         self.assertRedirects(response, reverse("login"))
 
-        # Check that the user was created
         self.assertTrue(User.objects.filter(username="newregisteruser").exists())
 
         # Check that a profile was automatically created

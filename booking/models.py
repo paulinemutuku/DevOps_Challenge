@@ -23,7 +23,6 @@ class FitnessClass(models.Model):
     capacity = models.IntegerField()
     category = models.CharField(max_length=50, default='general')
 
-    # Your existing methods remain the same
 
     def __str__(self):
         return f"{self.name} - {self.date} {self.start_time}"
@@ -55,7 +54,6 @@ class UserProfile(models.Model):
         return self.user.username
 
     class Meta:
-        # Add explicit constraints
         constraints = [
             models.UniqueConstraint(fields=["user"], name="unique_user_profile")
         ]

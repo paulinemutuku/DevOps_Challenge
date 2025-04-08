@@ -102,8 +102,8 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 465
 EMAIL_USE_SSL = True
-EMAIL_HOST_USER = "p.mutuku@alustudent.com"
-EMAIL_HOST_PASSWORD = "nfic tvma epsj lssm"
-DEFAULT_FROM_EMAIL = "p.mutuku@alustudent.com"
+EMAIL_HOST_USER = "paulinenthenya10@gmail.com"
+EMAIL_HOST_PASSWORD = "mzup mlbr ebzt sbab"
+DEFAULT_FROM_EMAIL = "paulinenthenya10@gmail.com"
 
 warnings.filterwarnings("ignore", message="No directory at", category=UserWarning)

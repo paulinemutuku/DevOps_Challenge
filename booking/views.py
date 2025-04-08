@@ -1,5 +1,5 @@
 import logging
-from datetime import date, datetime, timedelta  # Add these imports
+from datetime import date, datetime, timedelta  
 
 from django.conf import settings
 from django.contrib import messages
@@ -15,12 +15,10 @@ from django.utils import timezone
 from .forms import BookingForm, UserProfileForm, UserRegisterForm
 from .models import Booking, FitnessClass, UserProfile
 
-# Set up logging
 logger = logging.getLogger(__name__)
 
 
 def home(request):
-    # Get upcoming classes for the home page
     upcoming_classes = FitnessClass.objects.filter(
         date__gte=timezone.now().date()
     ).order_by("date", "start_time")[:3]
@@ -43,7 +41,6 @@ def register(request):
                 request, f"Account created for {username}! You can now log in."
             )
 
-            # Try to send email, but don't fail if it doesn't work
             try:
                 # Get current site domain for absolute URLs
                 current_site = request.META["HTTP_HOST"]

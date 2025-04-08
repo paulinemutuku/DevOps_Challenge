@@ -13,13 +13,10 @@ class UserProfileMiddleware(MiddlewareMixin):
         self.get_response = get_response
 
     def __call__(self, request):
-        # Process request
         self.process_request(request)
         
-        # Get response
         response = self.get_response(request)
         
-        # Return response
         return response
 
     def process_request(self, request):
@@ -27,12 +24,9 @@ class UserProfileMiddleware(MiddlewareMixin):
         Attach userprofile to authenticated users
         """
         if hasattr(request, 'user') and not isinstance(request.user, AnonymousUser) and request.user.is_authenticated:
-            # Get or create user profile
             try:
-                # Try to access userprofile
                 profile = request.user.userprofile
             except UserProfile.DoesNotExist:
-                # Create profile if doesn't exist
                 profile = UserProfile.objects.create(user=request.user)
                 
         return True
