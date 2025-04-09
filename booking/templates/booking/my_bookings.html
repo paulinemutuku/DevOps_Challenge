@@ -3,7 +3,6 @@
 
 {% block extra_css %}
 <style>
-    /* Page Header */
     .page-header {
         text-align: center;
         margin-bottom: 40px;
@@ -37,9 +36,8 @@
         margin: 25px auto 0;
     }
     
-    /* Booking Dashboard */
     .booking-dashboard {
-        background-color: white;
+        background-color: #fff; 
         border-radius: 15px;
         overflow: hidden;
         box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
@@ -50,6 +48,7 @@
         background: linear-gradient(to right, var(--primary-color), var(--accent-color));
         color: white;
         padding: 20px 25px;
+        border-radius: 15px 15px 0 0; 
     }
     
     .dashboard-header h2 {
@@ -62,7 +61,6 @@
         padding: 25px;
     }
     
-    /* Stats Cards */
     .stats-cards {
         display: flex;
         gap: 20px;
@@ -71,7 +69,7 @@
     }
     
     .stat-card {
-        background-color: white;
+        background-color: #fff; 
         border-radius: 12px;
         padding: 20px;
         flex: 1;
@@ -98,19 +96,9 @@
         font-size: 1.5rem;
     }
     
-    .stat-icon.purple {
-        background-color: rgba(149, 76, 233, 0.1);
-        color: #954ce9;
-    }
-    
-    .stat-icon.green {
-        background-color: rgba(46, 202, 106, 0.1);
-        color: #2eca6a;
-    }
-    
-    .stat-icon.blue {
-        background-color: rgba(24, 144, 255, 0.1);
-        color: #1890ff;
+    .stat-icon.red {
+        background-color: rgba(192, 57, 43, 0.1); 
+        color: #c0392b; 
     }
     
     .stat-icon.orange {
@@ -131,7 +119,6 @@
         font-size: 0.9rem;
     }
     
-    /* Booking Cards */
     .booking-cards {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -140,7 +127,7 @@
     }
     
     .booking-card {
-        background-color: white;
+        background-color: #fff; 
         border-radius: 15px;
         overflow: hidden;
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
@@ -162,6 +149,7 @@
         font-size: 1.1rem;
         position: relative;
         overflow: hidden;
+        border-radius: 15px 15px 0 0; 
     }
     
     .booking-header::after {
@@ -215,13 +203,13 @@
     }
     
     .status-upcoming {
-        background-color: rgba(24, 144, 255, 0.1);
-        color: #1890ff;
+        background-color: rgba(192, 57, 43, 0.1); 
+        color: #e419e4; 
     }
     
     .status-completed {
         background-color: rgba(46, 202, 106, 0.1);
-        color: #2eca6a;
+        color: #f0166a;
     }
     
     .btn-danger-soft {
@@ -248,7 +236,6 @@
         color: white;
     }
     
-    /* Table Styling */
     .booking-table {
         width: 100%;
         border-collapse: separate;
@@ -333,7 +320,6 @@
         margin: 0 auto 25px;
     }
     
-    /* Modal Styling */
     .modal-content {
         border-radius: 15px;
         overflow: hidden;
@@ -402,19 +388,14 @@
 
 {% block content %}
 <div class="container my-5">
-    <!-- Page Header -->
     <div class="page-header">
-        <h1>My Bookings</h1>
+        <h1>My Classes</h1>
         <p>Manage all your fitness class bookings in one place</p>
     </div>
     
     {% if bookings.exists %}
-      <!-- Stats Section -->
       <div class="stats-cards">
         <div class="stat-card">
-            <div class="stat-icon purple">
-                <i class="fas fa-calendar-check"></i>
-            </div>
             <div class="stat-info">
                 <h3>{{ bookings.count }}</h3>
                 <p>Total Bookings</p>
@@ -422,9 +403,6 @@
         </div>
         
         <div class="stat-card">
-            <div class="stat-icon green">
-                <i class="fas fa-dumbbell"></i>
-            </div>
             <div class="stat-info">
                 <h3>{{ upcomingClasses|default:"0" }}</h3>
                 <p>Upcoming Classes</p>
@@ -432,22 +410,9 @@
         </div>
         
         <div class="stat-card">
-            <div class="stat-icon blue">
-                <i class="fas fa-fire-alt"></i>
-            </div>
             <div class="stat-info">
                 <h3>{{ totalHours|default:"0" }}</h3>
                 <p>Total Hours</p>
-            </div>
-        </div>
-        
-        <div class="stat-card">
-            <div class="stat-icon orange">
-                <i class="fas fa-star"></i>
-            </div>
-            <div class="stat-info">
-                <h3>{{ favoriteClass|default:"Yoga" }}</h3>
-                <p>Favorite Class</p>
             </div>
         </div>
     </div>
@@ -455,7 +420,6 @@
         <div class="dashboard-body">            
             <h3 class="mt-5 mb-4">Booking Schedule</h3>
             
-            <!-- Table View -->
             <div class="booking-table-container">
                 <table class="booking-table">
                     <thead>
@@ -464,7 +428,6 @@
                             <th>Date</th>
                             <th>Time</th>
                             <th>Instructor</th>
-                            <th>Booking Date</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -476,12 +439,11 @@
                             <td>{{ booking.fitness_class.date }}</td>
                             <td>{{ booking.fitness_class.start_time }} - {{ booking.fitness_class.end_time }}</td>
                             <td>{{ booking.fitness_class.instructor }}</td>
-                            <td>{{ booking.booking_date|date:"M d, Y"|default:"Not available" }}</td>
                             <td>
                                 {% if booking.fitness_class.date >= today %}
-                                <span class="badge bg-primary">Upcoming</span>
+                                <span class="text-primary">Upcoming</span>
                                 {% else %}
-                                <span class="badge bg-success">Completed</span>
+                                <span class="text-success">Completed</span>
                                 {% endif %}
                             </td>
                             <td>
@@ -497,14 +459,14 @@
                                         data-booking-date="{{ booking.booking_date|date:'M d, Y'|default:'Not available' }}"
                                         data-user-name="{{ booking.user.get_full_name|default:booking.user.username }}"
                                         data-user-email="{{ booking.user.email }}">
-                                        <i class="fas fa-eye"></i>
+                                        View Details
                                     </button>
                                     <button class="btn btn-sm btn-danger-soft cancel-booking-btn" 
                                         data-booking-id="{{ booking.id }}" 
                                         data-bs-toggle="modal" 
                                         data-bs-target="#cancelBookingModal" 
                                         data-class-name="{{ booking.fitness_class.name }}">
-                                        <i class="fas fa-times"></i>
+                                        Cancel Booking
                                     </button>
                                 </div>
                             </td>
@@ -523,91 +485,6 @@
         </div>
     </div>
     
-    <!-- Coming Soon Classes -->
-    <div class="mt-5">
-        <h3 class="mb-4">Upcoming Classes You Might Like</h3>
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            <div class="col">
-                <div class="class-card">
-                    <div class="class-header">
-                        Advanced Yoga
-                    </div>
-                    <div class="class-body">
-                        <p class="class-description">Take your yoga practice to the next level with advanced poses and techniques.</p>
-                        <div class="class-meta">
-                            <i class="fas fa-calendar"></i>
-                            <span>April 10, 2025</span>
-                        </div>
-                        <div class="class-meta">
-                            <i class="fas fa-clock"></i>
-                            <span>10:00 AM - 11:30 AM</span>
-                        </div>
-                        <div class="class-meta">
-                            <i class="fas fa-user"></i>
-                            <span>Maria Rodriguez</span>
-                        </div>
-                    </div>
-                    <div class="class-footer">
-                        <a href="{% url 'classes' %}" class="btn btn-primary w-100">Book Now</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col">
-                <div class="class-card">
-                    <div class="class-header">
-                        Functional Training
-                    </div>
-                    <div class="class-body">
-                        <p class="class-description">Build strength and mobility with exercises that mimic everyday movements.</p>
-                        <div class="class-meta">
-                            <i class="fas fa-calendar"></i>
-                            <span>April 12, 2025</span>
-                        </div>
-                        <div class="class-meta">
-                            <i class="fas fa-clock"></i>
-                            <span>6:00 PM - 7:00 PM</span>
-                        </div>
-                        <div class="class-meta">
-                            <i class="fas fa-user"></i>
-                            <span>Jason Wu</span>
-                        </div>
-                    </div>
-                    <div class="class-footer">
-                        <a href="{% url 'classes' %}" class="btn btn-primary w-100">Book Now</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col">
-                <div class="class-card">
-                    <div class="class-header">
-                        Meditation & Mindfulness
-                    </div>
-                    <div class="class-body">
-                        <p class="class-description">Reduce stress and improve focus with guided meditation techniques.</p>
-                        <div class="class-meta">
-                            <i class="fas fa-calendar"></i>
-                            <span>April 15, 2025</span>
-                        </div>
-                        <div class="class-meta">
-                            <i class="fas fa-clock"></i>
-                            <span>7:30 PM - 8:30 PM</span>
-                        </div>
-                        <div class="class-meta">
-                            <i class="fas fa-user"></i>
-                            <span>Sarah Johnson</span>
-                        </div>
-                    </div>
-                    <div class="class-footer">
-                        <a href="{% url 'classes' %}" class="btn btn-primary w-100">Book Now</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Modal for viewing booking details -->
     <div class="modal fade" id="viewDetailsModal" tabindex="-1" aria-labelledby="viewDetailsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -638,7 +515,6 @@
                             <span class="details-value" id="modal-booking-date"></span>
                         </div>
                         
-                        <!-- User Profile Information -->
                         <div class="details-item">
                             <span class="details-label">Booked By</span>
                             <span class="details-value" id="modal-user-name"></span>
@@ -660,7 +536,6 @@
         </div>
     </div>
     
-    <!-- Modal for confirming cancellation -->
     <div class="modal fade" id="cancelBookingModal" tabindex="-1" aria-labelledby="cancelBookingModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -670,7 +545,7 @@
                 </div>
                 <div class="modal-body">
                     <p>Are you sure you want to cancel your booking for <strong id="modal-cancel-class-name"></strong>?</p>
-                    <p class="text-muted small">This action cannot be undone. Your spot will be made available to other members.</p>
+                    <p class="text-muted small">Please note that the cancellation cannot be undone and someone else might fill in the spot available.</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No, Keep My Booking</button>
@@ -681,96 +556,11 @@
     </div>
     
     {% else %}
-    <!-- Empty State -->
     <div class="empty-state">
         <i class="fas fa-calendar-times"></i>
         <h3>You don't have any bookings yet</h3>
-        <p>Start your fitness journey by booking your first class.</p>
+        <p>Start your fitness journey by booking your class.</p>
         <a href="{% url 'classes' %}" class="btn btn-primary btn-lg">Browse Available Classes</a>
-    </div>
-    
-    <!-- Class Suggestions -->
-    <div class="mt-5">
-        <h3 class="mb-4">Popular Classes You Might Like</h3>
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            <div class="col">
-                <div class="class-card">
-                    <div class="class-header">
-                        Aerobics
-                    </div>
-                    <div class="class-body">
-                        <p class="class-description">Physical exercise that combines rhythmic aerobic exercise with stretching and strength training</p>
-                        <div class="class-meta">
-                            <i class="fas fa-calendar"></i>
-                            <span>April 5, 2025</span>
-                        </div>
-                        <div class="class-meta">
-                            <i class="fas fa-clock"></i>
-                            <span>9:00 AM - 10:00 AM</span>
-                        </div>
-                        <div class="class-meta">
-                            <i class="fas fa-user"></i>
-                            <span>Martha Ndolo</span>
-                        </div>
-                    </div>
-                    <div class="class-footer">
-                        <a href="{% url 'classes' %}" class="btn btn-primary w-100">Book Now</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col">
-                <div class="class-card">
-                    <div class="class-header">
-                        Strength Training
-                    </div>
-                    <div class="class-body">
-                        <p class="class-description">High-intensity interval training to boost your metabolism and build strength.</p>
-                        <div class="class-meta">
-                            <i class="fas fa-calendar"></i>
-                            <span>April 6, 2025</span>
-                        </div>
-                        <div class="class-meta">
-                            <i class="fas fa-clock"></i>
-                            <span>6:00 PM - 7:00 PM</span>
-                        </div>
-                        <div class="class-meta">
-                            <i class="fas fa-user"></i>
-                            <span>Philip Okoth</span>
-                        </div>
-                    </div>
-                    <div class="class-footer">
-                        <a href="{% url 'classes' %}" class="btn btn-primary w-100">Book Now</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col">
-                <div class="class-card">
-                    <div class="class-header">
-                        Pilates
-                    </div>
-                    <div class="class-body">
-                        <p class="class-description">Core-strengthening exercises that improve posture, balance, and overall body awareness.</p>
-                        <div class="class-meta">
-                            <i class="fas fa-calendar"></i>
-                            <span>April 7, 2025</span>
-                        </div>
-                        <div class="class-meta">
-                            <i class="fas fa-clock"></i>
-                            <span>10:30 AM - 11:30 AM</span>
-                        </div>
-                        <div class="class-meta">
-                            <i class="fas fa-user"></i>
-                            <span>Sheila Mwikali</span>
-                        </div>
-                    </div>
-                    <div class="class-footer">
-                        <a href="{% url 'classes' %}" class="btn btn-primary w-100">Book Now</a>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
     {% endif %}
 </div>
@@ -779,7 +569,6 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Add hover effect on booking cards
         const bookingCards = document.querySelectorAll('.booking-card');
         bookingCards.forEach(card => {
             card.addEventListener('mouseenter', function() {
@@ -793,7 +582,6 @@
             });
         });
         
-        // Add hover effect on table rows
         const tableRows = document.querySelectorAll('.booking-table tbody tr');
         tableRows.forEach(row => {
             row.addEventListener('mouseenter', function() {
@@ -807,14 +595,11 @@
             });
         });
         
-        // View Details Modal
         const viewDetailsModal = document.getElementById('viewDetailsModal');
         if (viewDetailsModal) {
             viewDetailsModal.addEventListener('show.bs.modal', function (event) {
-                // Button that triggered the modal
                 const button = event.relatedTarget;
                 
-                // Extract info from data-* attributes
                 const className = button.getAttribute('data-class-name');
                 const classDate = button.getAttribute('data-class-date');
                 const classTime = button.getAttribute('data-class-time');
@@ -823,14 +608,12 @@
                 const userName = button.getAttribute('data-user-name');
                 const userEmail = button.getAttribute('data-user-email');
                 
-                // Update the modal's content
                 document.getElementById('modal-class-name').textContent = className;
                 document.getElementById('modal-class-date').textContent = classDate;
                 document.getElementById('modal-class-time').textContent = classTime;
                 document.getElementById('modal-class-instructor').textContent = classInstructor;
                 document.getElementById('modal-booking-date').textContent = bookingDate;
                 
-                // Update user profile info
                 if (document.getElementById('modal-user-name')) {
                     document.getElementById('modal-user-name').textContent = userName || 'Not available';
                 }
@@ -840,36 +623,27 @@
             });
         }
         
-        // Cancel Booking Modal
         const cancelBookingModal = document.getElementById('cancelBookingModal');
         if (cancelBookingModal) {
             cancelBookingModal.addEventListener('show.bs.modal', function (event) {
-                // Button that triggered the modal
                 const button = event.relatedTarget;
                 
-                // Extract info from data-* attributes
                 const bookingId = button.getAttribute('data-booking-id');
                 const className = button.getAttribute('data-class-name');
                 
-                // Update the modal's content
                 document.getElementById('modal-cancel-class-name').textContent = className;
                 
-                // Update the confirm button href
                 const confirmCancelBtn = document.getElementById('confirm-cancel-btn');
                 confirmCancelBtn.href = `{% url 'cancel_booking' 0 %}`.replace('0', bookingId);
                 
-                // Add event listener to the confirm button
                 confirmCancelBtn.addEventListener('click', function() {
-                    // Optional: Show loading spinner
                     this.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Cancelling...';
                     this.disabled = true;
                     
-                    // The actual cancellation will happen when the href is followed
                 });
             });
         }
         
-        // Class cards hover effect
         const classCards = document.querySelectorAll('.class-card');
         classCards.forEach(card => {
             card.addEventListener('mouseenter', function() {
@@ -883,7 +657,6 @@
             });
         });
         
-        // Optional: Add animation for empty state icon
         const emptyStateIcon = document.querySelector('.empty-state i');
         if (emptyStateIcon) {
             emptyStateIcon.style.transition = 'all 0.5s ease';

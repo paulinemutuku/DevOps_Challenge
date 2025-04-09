@@ -1,4 +1,3 @@
-/* Main Styling */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
@@ -6,7 +5,6 @@ body {
     color: #333;
 }
 
-/* Header and Footer */
 .navbar {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -15,7 +13,6 @@ footer {
     margin-top: auto;
 }
 
-/* Cards and containers */
 .card {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
@@ -31,31 +28,47 @@ footer {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
-/* Buttons */
 .btn-primary {
-    background-color: #F8B712;
-    border-color: #F8B712;
+    background-color: #ff4d4d;
+    border-color: #ff4d4d;
 }
 
 .btn-primary:hover {
-    background-color: #000000;
-    border-color: #F8B712;
+    background-color: #cc0000;
+    border-color: #ff4d4d;
 }
 
 .btn-success {
-    background-color: #1cc88a;
-    border-color: #1cc88a;
+    background-color: #ff9999;
+    border-color: #ff9999;
 }
 
 .btn-success:hover {
-    background-color: #113e2e;
-    border-color: #052d1e;
+    background-color: #cc0000;
+    border-color: #990000;
 }
 
-/* Form styling */
 .form-control:focus {
-    border-color: #F8B712;
-    box-shadow: 0 0 0 0.2rem #c9b686;
+    border-color: #ff4d4d;
+    box-shadow: 0 0 0 0.2rem #ffcccc;
 }
 
-/* Custom classes */
+.alert-success {
+    background-color: #ffcccc;
+    color: #a00000;
+    border-color: #ff9999;
+}
+
+.alert-success a {
+    color: #a00000;
+}
+
+.alert-warning {
+    background-color: #ffe6e6;
+    color: #a00000;
+    border-color: #ff9999;
+}
+
+.alert-warning a {
+    color: #a00000;
+}

@@ -42,23 +42,20 @@ def register(request):
             )
 
             try:
-                # Get current site domain for absolute URLs
                 current_site = request.META["HTTP_HOST"]
                 site_url = (
                     f"{'https://' if request.is_secure() else 'http://'}{current_site}"
                 )
 
-                # Render the HTML email
                 html_message = render_to_string(
                     "booking/emails/welcome_email.html",
                     {"user": user, "site_url": site_url},
                 )
 
-                # Plain text fallback
                 plain_message = f"Hi {user.first_name},\n\nThank you for registering with our Fitness Class Booking System!"
 
                 send_mail(
-                    "Welcome to FitBook!",
+                    "Welcome to FitMe!",
                     plain_message,
                     settings.EMAIL_HOST_USER,
                     [user.email],
@@ -77,14 +74,11 @@ def register(request):
 
 @login_required
 def classes(request):
-    # Initialize filter variables
     query = request.GET.get("query", "")
     category = request.GET.get("category", "")
 
-    # Get all classes (not just upcoming ones) to show everything in the database
     all_classes = FitnessClass.objects.all().order_by("date", "start_time")
 
-    # Apply filters if provided
     if query:
         all_classes = all_classes.filter(
             Q(name__icontains=query)
@@ -95,24 +89,19 @@ def classes(request):
     if category:
         all_classes = all_classes.filter(category=category)
 
-    # Get user's bookings to check which classes are already booked
     user_bookings = Booking.objects.filter(user=request.user).values_list(
         "fitness_class_id", flat=True
     )
 
-    # Add booking status to each class
     for fitness_class in all_classes:
         fitness_class.is_booked = fitness_class.id in user_bookings
         fitness_class.is_available = not fitness_class.is_full
 
-    # Get all categories for the filter dropdown
     try:
         categories = FitnessClass.CATEGORY_CHOICES
     except AttributeError:
-        # Fallback if CATEGORY_CHOICES is not defined in the model
         categories = []
 
-    # Separate featured classes (first 2) and initial display classes (next 6)
     featured_classes = all_classes[:2]
     initial_classes = all_classes[2:8]
     remaining_classes = all_classes[8:]
@@ -131,32 +120,26 @@ def classes(request):
     return render(request, "booking/classes.html", context)
 
 
-# AJAX endpoint to load more classes
 @login_required
 def load_more_classes(request):
     offset = int(
         request.GET.get("offset", 8)
-    )  # Default to skip the first 8 classes (2 featured + 6 initial)
-    limit = int(request.GET.get("limit", 6))  # Load 6 more by default
+    )  
+    limit = int(request.GET.get("limit", 6))  
 
-    # Get the next batch of classes
     classes = FitnessClass.objects.all().order_by("date", "start_time")[
         offset : offset + limit
     ]
 
-    # Get user's bookings to check which classes are already booked
     user_bookings = Booking.objects.filter(user=request.user).values_list(
         "fitness_class_id", flat=True
     )
 
-    # Build the HTML for the additional classes
     class_html = []
     for i, fitness_class in enumerate(classes):
         fitness_class.is_booked = fitness_class.id in user_bookings
         fitness_class.is_available = not fitness_class.is_full
 
-        # You'd render each class card here, but this is simplified
-        # In a real implementation, you might use a template fragment
         class_html.append(
             {
                 "id": fitness_class.id,
@@ -171,7 +154,6 @@ def load_more_classes(request):
             }
         )
 
-    # Check if there are more classes to load
     has_more = FitnessClass.objects.all().count() > offset + limit
 
     return JsonResponse(
@@ -187,7 +169,6 @@ def book_class(request, class_id):
         form = BookingForm(request.POST)
 
         if form.is_valid():
-            # Check if user already booked this class
             if Booking.objects.filter(
                 user=request.user, fitness_class=fitness_class
             ).exists():
@@ -196,38 +177,32 @@ def book_class(request, class_id):
                 )
                 return redirect("classes")
 
-            # Check if class is full
             if fitness_class.is_full:
                 messages.warning(
                     request, f"Sorry, {fitness_class.name} is already full!"
                 )
                 return redirect("classes")
 
-            # Create booking
             booking = form.save(commit=False)
             booking.user = request.user
             booking.fitness_class = fitness_class
             booking.save()
 
-            # Try to send confirmation email, but don't fail if it doesn't work
             try:
-                # Get current site domain for absolute URLs
                 current_site = request.META["HTTP_HOST"]
                 site_url = (
                     f"{'https://' if request.is_secure() else 'http://'}{current_site}"
                 )
 
-                # Render the HTML email
                 html_message = render_to_string(
                     "booking/emails/booking_confirmation.html",
                     {"user": request.user, "booking": booking, "site_url": site_url},
                 )
 
-                # Plain text fallback
                 plain_message = f"Hi {request.user.first_name},\n\nYour booking for {fitness_class.name} on {fitness_class.date} at {fitness_class.start_time} has been confirmed!"
 
                 send_mail(
-                    f"Your FitBook Booking Confirmation: {fitness_class.name}",
+                    f"Your FitMe Booking Confirmation: {fitness_class.name}",
                     plain_message,
                     settings.EMAIL_HOST_USER,
                     [request.user.email],
@@ -258,20 +233,16 @@ def cancel_booking(request, booking_id):
     if request.method == "POST":
         class_name = booking.fitness_class.name
 
-        # Store booking info before deletion for email
         fitness_class = booking.fitness_class
 
         booking.delete()
 
-        # Try to send cancellation email, but don't fail if it doesn't work
         try:
-            # Get current site domain for absolute URLs
             current_site = request.META["HTTP_HOST"]
             site_url = (
                 f"{'https://' if request.is_secure() else 'http://'}{current_site}"
             )
 
-            # Render the HTML email
             html_message = render_to_string(
                 "booking/emails/booking_cancellation.html",
                 {
@@ -281,11 +252,10 @@ def cancel_booking(request, booking_id):
                 },
             )
 
-            # Plain text fallback
             plain_message = f"Hi {request.user.first_name},\n\nYour booking for {class_name} has been cancelled."
 
             send_mail(
-                "Your FitBook Booking Cancellation",
+                "FitMe Booking Cancellation",
                 plain_message,
                 settings.EMAIL_HOST_USER,
                 [request.user.email],
@@ -309,22 +279,17 @@ def booking_confirmation(request, booking_id):
 
 @login_required
 def my_bookings(request):
-    # Get all bookings for the current user and order them by class date and time
     bookings = Booking.objects.filter(user=request.user).order_by(
         "fitness_class__date", "fitness_class__start_time"
     )
 
-    # Debug: Log the number of bookings found
     print(f"Found {bookings.count()} bookings for user {request.user.username}")
 
-    # Calculate statistics for the dashboard
     today = timezone.now().date()
 
-    # Get upcoming bookings
     upcoming_bookings = [b for b in bookings if b.fitness_class.date >= today]
     upcoming_count = len(upcoming_bookings)
 
-    # Calculate total hours
     total_hours = 0
     for booking in bookings:
         if hasattr(booking.fitness_class, "start_time") and hasattr(

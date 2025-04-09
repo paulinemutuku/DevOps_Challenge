@@ -22,4 +22,4 @@ class UserProfileForm(forms.ModelForm):
 class BookingForm(forms.ModelForm):
     class Meta:
         model = Booking
-        fields = []  # No fields needed as we'll set user and fitness_class in the view
+        fields = []  

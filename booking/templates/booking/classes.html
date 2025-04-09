@@ -496,7 +496,6 @@
         <p>Find your perfect class and book your spot today!</p>
     </div>
     
-    <!-- Promotional Banner -->
     <div class="insight-section">
         <div class="insight-container">
             <div class="insight-text">
@@ -507,7 +506,6 @@
         </div>
     </div>
     
-    <!-- Filter Section -->
     <div class="filter-section">
         <div class="row">
             <div class="col-md-6">
@@ -534,7 +532,6 @@
     </div>
     
         
-        <!-- Load More Button -->
         {% if has_more_classes %}
         <div class="load-more-container">
             <button id="load-more-btn" class="load-more-btn" data-offset="8">View More Classes</button>
@@ -542,7 +539,6 @@
         {% endif %}
     </div>
     
-    <!-- Testimonial Section -->
     <section class="testimonial-section mt-5">
         <div class="container">
             <div class="section-header">
@@ -647,7 +643,6 @@
             document.querySelector('.class-count').textContent = visibleClasses;
         }
         
-        // Add hover effect on class cards
         function addHoverEffect() {
             const classCards = document.querySelectorAll('.class-card');
             classCards.forEach(card => {
@@ -663,10 +658,8 @@
             });
         }
         
-        // Initialize hover effect
         addHoverEffect();
         
-        // Load More functionality
         const loadMoreBtn = document.getElementById('load-more-btn');
         if (loadMoreBtn) {
             loadMoreBtn.addEventListener('click', function() {
